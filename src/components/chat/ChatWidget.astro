@@ -1,0 +1,167 @@
+---
+---
+
+<section id="chat-widget" class="mb-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+  <div class="bg-secondary rounded-3xl p-8 md:p-16 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-primary/10 rounded-full translate-x-1/3 translate-y-1/3"></div>
+
+    <div class="relative z-10 max-w-2xl mx-auto text-center">
+      <h3 class="text-white text-headline-md text-3xl mb-4">Hỏi chúng tôi bất cứ điều gì bạn muốn</h3>
+      <p class="text-secondary-fixed mb-8">
+        Hệ thống AI hỗ trợ sẽ tư vấn mọi thắc mắc của bạn, chẳng hạn: cần mua đệm 3tr, cần tư vấn mua combo cưới, hoặc
+        hướng dẫn bảo quản ga tencel...
+      </p>
+
+      <div id="chat-thread" class="hidden text-left bg-white/95 rounded-2xl p-4 md:p-6 mb-6 max-h-96 overflow-y-auto space-y-3 custom-scrollbar">
+      </div>
+
+      <form id="chat-form" class="flex flex-col gap-4">
+        <input type="text" name="website" id="chat-honeypot" class="hidden" tabindex="-1" autocomplete="off" />
+        <textarea
+          id="chat-input"
+          rows="3"
+          required
+          placeholder="Nhập câu hỏi của bạn..."
+          class="w-full px-6 py-4 rounded-lg bg-white border-none focus:ring-2 focus:ring-primary-fixed outline-none text-on-surface resize-none"
+        ></textarea>
+        <button
+          id="chat-submit"
+          type="submit"
+          class="self-center bg-primary text-white px-10 py-4 rounded-lg font-bold hover:bg-red-800 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Gửi
+        </button>
+      </form>
+      <p id="chat-error" class="hidden text-white text-sm mt-4"></p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const N8N_WEBHOOK_URL = import.meta.env.PUBLIC_N8N_CHAT_WEBHOOK_URL || "";
+  const HOTLINE_FALLBACK = "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại hoặc liên hệ hotline 0912.426.126";
+
+  const thread = document.getElementById("chat-thread") as HTMLDivElement;
+  const form = document.getElementById("chat-form") as HTMLFormElement;
+  const input = document.getElementById("chat-input") as HTMLTextAreaElement;
+  const honeypot = document.getElementById("chat-honeypot") as HTMLInputElement;
+  const submitBtn = document.getElementById("chat-submit") as HTMLButtonElement;
+  const errorEl = document.getElementById("chat-error") as HTMLParagraphElement;
+
+  function getSessionId() {
+    let id = sessionStorage.getItem("maybedding-chat-session");
+    if (!id) {
+      id = "web:" + crypto.randomUUID();
+      sessionStorage.setItem("maybedding-chat-session", id);
+    }
+    return id;
+  }
+
+  function appendBubble(text: string, from: "user" | "bot") {
+    thread.classList.remove("hidden");
+    const bubble = document.createElement("div");
+    bubble.className =
+      from === "user"
+        ? "ml-auto max-w-[85%] bg-primary text-white rounded-xl rounded-br-sm px-4 py-2 text-sm"
+        : "mr-auto max-w-[85%] bg-surface-container-high text-on-surface rounded-xl rounded-bl-sm px-4 py-2 text-sm whitespace-pre-wrap";
+    bubble.textContent = text;
+    thread.appendChild(bubble);
+    thread.scrollTop = thread.scrollHeight;
+    return bubble;
+  }
+
+  function appendTypingIndicator() {
+    thread.classList.remove("hidden");
+    const bubble = document.createElement("div");
+    bubble.id = "chat-typing";
+    bubble.className = "mr-auto max-w-[85%] bg-surface-container-high text-on-surface-variant rounded-xl rounded-bl-sm px-4 py-2 text-sm";
+    bubble.textContent = "Đang trả lời...";
+    thread.appendChild(bubble);
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  function removeTypingIndicator() {
+    document.getElementById("chat-typing")?.remove();
+  }
+
+  // Stub reply used only when PUBLIC_N8N_CHAT_WEBHOOK_URL isn't configured yet
+  // (Phase 4 step 1: build/verify the UI before the n8n workflow exists).
+  async function mockReply(): Promise<string> {
+    await new Promise((r) => setTimeout(r, 700));
+    return "Đây là câu trả lời mẫu (chatbot thật sẽ được kết nối sau khi workflow n8n sẵn sàng). Cảm ơn bạn đã nhắn tin cho maybedding!";
+  }
+
+  async function sendMessage(chatInput: string): Promise<string> {
+    if (!N8N_WEBHOOK_URL) {
+      return mockReply();
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+
+    try {
+      const res = await fetch(N8N_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: getSessionId(),
+          action: "sendMessage",
+          chatInput,
+          website: honeypot.value,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.output ?? data.text ?? data.reply ?? HOTLINE_FALLBACK;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const value = input.value.trim();
+    if (!value) return;
+
+    appendBubble(value, "user");
+    input.value = "";
+    input.disabled = true;
+    submitBtn.disabled = true;
+    errorEl.classList.add("hidden");
+    appendTypingIndicator();
+
+    try {
+      const reply = await sendMessage(value);
+      removeTypingIndicator();
+      appendBubble(reply, "bot");
+    } catch {
+      removeTypingIndicator();
+      errorEl.textContent = HOTLINE_FALLBACK;
+      errorEl.classList.remove("hidden");
+    } finally {
+      input.disabled = false;
+      submitBtn.disabled = false;
+      input.focus();
+    }
+  });
+
+  input?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  // Product-card "Hỏi ngay về sản phẩm này" buttons pre-fill and focus this widget.
+  document.querySelectorAll<HTMLButtonElement>(".chat-open-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const prefill = btn.dataset.prefill ?? "";
+      document.getElementById("chat-widget")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      input.value = prefill;
+      input.focus();
+    });
+  });
+</script>
