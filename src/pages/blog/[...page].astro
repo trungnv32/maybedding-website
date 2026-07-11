@@ -1,12 +1,10 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BlogCard from "../../components/blog/BlogCard.astro";
+import { getBlogPosts } from "../../lib/groq/blog";
 
 export async function getStaticPaths({ paginate }: { paginate: Function }) {
-  const posts = (await getCollection("blog")).sort(
-    (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf()
-  );
+  const posts = await getBlogPosts();
   return paginate(posts, { pageSize: 9 });
 }
 
@@ -22,21 +20,25 @@ const { page } = Astro.props;
       <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Blog</span>
       <h1 class="text-headline-md text-on-surface">Kiến Thức & Kinh Nghiệm Giấc Ngủ</h1>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-      {
-        page.data.map((post: any) => (
-          <BlogCard
-            slug={post.id}
-            title={post.data.title}
-            excerpt={post.data.excerpt}
-            coverImage={post.data.coverImage}
-            coverImageAlt={post.data.coverImageAlt}
-            category={post.data.category}
-            publishedAt={post.data.publishedAt}
-          />
-        ))
-      }
-    </div>
+    {
+      page.data.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+          {page.data.map((post: any) => (
+            <BlogCard
+              slug={post.slug}
+              title={post.title}
+              excerpt={post.excerpt}
+              coverImage={post.coverImage}
+              coverImageAlt={post.coverImageAlt}
+              category={post.category}
+              publishedAt={new Date(post.publishedAt)}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="text-on-surface-variant/70">Bài viết đang được cập nhật, mời bạn quay lại sau.</p>
+      )
+    }
     {
       (page.url.prev || page.url.next) && (
         <div class="flex justify-center gap-4 mt-16">

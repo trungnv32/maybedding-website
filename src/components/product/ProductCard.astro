@@ -19,11 +19,9 @@ const { badge, name, price, description, image } = Astro.props;
     <h4 class="text-xl text-on-surface mt-1">{name}</h4>
     <p class="text-secondary font-bold text-lg mt-2">{price}</p>
     <p class="text-on-surface-variant/70 text-sm mt-2">{description}</p>
-  </div>
-  <div class="product-action absolute inset-x-0 bottom-0 p-4 translate-y-full opacity-0 transition-all duration-300 bg-white/90 backdrop-blur-sm">
     <button
       type="button"
-      class="chat-open-btn w-full bg-primary text-white py-3 rounded font-bold hover:bg-red-800 transition-colors"
+      class="chat-open-btn w-full mt-4 bg-primary text-white py-3 rounded font-bold hover:bg-red-800 transition-colors"
       data-prefill={`Cho tôi hỏi thêm về sản phẩm "${name}"`}
     >
       Hỏi ngay về sản phẩm này

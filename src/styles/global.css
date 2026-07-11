@@ -110,11 +110,6 @@ body {
   background: linear-gradient(rgba(252, 249, 248, 0.2), rgba(252, 249, 248, 0.95));
 }
 
-.product-card:hover .product-action {
-  transform: translateY(0);
-  opacity: 1;
-}
-
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
   height: 4px;

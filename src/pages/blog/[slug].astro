@@ -1,28 +1,32 @@
 ---
-import { getCollection, render } from "astro:content";
+import { PortableText } from "astro-portabletext";
 import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
+import PortableImage from "../../components/blog/PortableImage.astro";
+import { getBlogPostBySlug, getBlogPostSlugs } from "../../lib/groq/blog";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+  const slugs = await getBlogPostSlugs();
+  return slugs.map((slug) => ({ params: { slug } }));
 }
 
-const { post } = Astro.props;
-const { Content } = await render(post);
-const description = post.data.seo?.metaDescription ?? post.data.excerpt;
+const { slug } = Astro.params;
+const post = await getBlogPostBySlug(slug!);
+
+if (!post) {
+  return Astro.redirect("/blog", 404);
+}
+
+const description = post.metaDescription ?? post.excerpt;
 ---
 
 <BlogPostLayout
-  title={post.data.seo?.metaTitle ?? post.data.title}
+  title={post.metaTitle ?? post.title}
   description={description}
-  coverImage={post.data.coverImage}
-  coverImageAlt={post.data.coverImageAlt}
-  category={post.data.category}
-  publishedAt={post.data.publishedAt}
-  author={post.data.author}
+  coverImage={post.coverImage}
+  coverImageAlt={post.coverImageAlt}
+  category={post.category}
+  publishedAt={new Date(post.publishedAt)}
+  author={post.author}
 >
-  <Content />
+  <PortableText value={post.body} components={{ type: { image: PortableImage } }} />
 </BlogPostLayout>

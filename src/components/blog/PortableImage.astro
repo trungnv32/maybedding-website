@@ -1,0 +1,12 @@
+---
+import { urlFor } from "../../lib/sanity";
+
+const { node } = Astro.props;
+---
+
+<img
+  src={urlFor(node).width(800).url()}
+  alt={node.alt ?? ""}
+  loading="lazy"
+  class="w-full rounded-xl my-6"
+/>

@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProductCard from "../components/product/ProductCard.astro";
+import ChatWidget from "../components/chat/ChatWidget.astro";
+import { getAllProducts } from "../lib/groq/products";
+
+const products = await getAllProducts();
+---
+
+<BaseLayout
+  title="Sản Phẩm - maybedding"
+  description="Toàn bộ sản phẩm chăn ga gối đệm may đo cao cấp của maybedding: đệm, chăn, ga, gối và phụ kiện."
+>
+  <section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="mb-12">
+      <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Sản phẩm</span>
+      <h1 class="text-headline-md text-on-surface">Toàn Bộ Sản Phẩm</h1>
+    </div>
+    {
+      products.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+          {products.map((product) => <ProductCard {...product} />)}
+        </div>
+      ) : (
+        <p class="text-on-surface-variant/70">
+          Danh mục sản phẩm đang được cập nhật. Vui lòng liên hệ hotline hoặc dùng khung chat bên dưới để được tư vấn.
+        </p>
+      )
+    }
+  </section>
+  <ChatWidget />
+</BaseLayout>

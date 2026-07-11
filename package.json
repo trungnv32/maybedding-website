@@ -16,6 +16,7 @@
     "@sanity/image-url": "^2.1.1",
     "@tailwindcss/vite": "^4.1.0",
     "astro": "^5.9.0",
+    "astro-portabletext": "^0.13.0",
     "tailwindcss": "^4.1.0"
   }
 }

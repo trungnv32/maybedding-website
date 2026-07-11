@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ServiceCard from "../components/service/ServiceCard.astro";
+import ChatWidget from "../components/chat/ChatWidget.astro";
+import { getServices } from "../lib/groq/services";
+
+const services = await getServices();
+---
+
+<BaseLayout
+  title="Dịch Vụ - maybedding"
+  description="Các dịch vụ đi kèm của maybedding: giao hàng tận nơi, vệ sinh chuyên nghiệp, tư vấn decor và nhiều hơn nữa."
+>
+  <section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="mb-12 text-center">
+      <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Dịch vụ</span>
+      <h1 class="text-headline-md text-on-surface">Dịch Vụ Tận Tâm</h1>
+    </div>
+    {
+      services.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+          {services.map((service) => <ServiceCard {...service} />)}
+        </div>
+      ) : (
+        <p class="text-on-surface-variant/70 text-center">
+          Thông tin dịch vụ đang được cập nhật. Vui lòng liên hệ hotline hoặc dùng khung chat bên dưới để được tư vấn.
+        </p>
+      )
+    }
+  </section>
+  <ChatWidget />
+</BaseLayout>
