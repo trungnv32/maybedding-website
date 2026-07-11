@@ -1,8 +1,21 @@
 ---
-const artisanImage =
+import { getAboutPage } from "../../lib/groq/aboutPage";
+
+const fallbackArtisanImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuD-h3Rr_6tP08jyW9c8bGeh9-IP3OozCnyDyCEKezjXIOLGSkAVwmBR2irsdRq0NqhS0hJIJV9DbJk1w47BUUoevc9IXHoYp-7N4GWRMUbZHXX1R5jEWbgao0jwyAgA640WYXc2FYXWXldEaM6mZSaMKtWRBeJ0PO_yZZTtJPTY4_ycMz-FZuNHIqG6DLpwdSqRUCPVwWOSl6M06XIbsNW8HNlrz-33AiKLbCmTium3X9P59yKsEfN6WlJyKwf3C9wwZL--pgwt8Lc";
-const textureImage =
+const fallbackTextureImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCQKbCydYo4DY0SxrTAxwMEMJ5kOpU-uafKUrW-6V473x3POPKStSGO0fINCFTUg2RkoheSul-w6yH1KlJrnnCaxgttcNSLn1ayB69EElV3i-GN5DplXeJiL3VdP-JwWsRRc6TFg1HTTQTHBjs5MhiQ9HHQggKVv41-1_CR6OQV4svxEW30Ge7k_HVs3kla8N0a0D6rP1wqQQaajqwCH78iFkMuJXA5vFoje2rIHjnPBcU_lbePlWGxCW__Nu44etaavsxrIqGGEIc";
+const fallbackQuote = "Giấc ngủ không chỉ là sự nghỉ ngơi, đó là khởi nguồn của năng lượng và hạnh phúc.";
+const fallbackIntro =
+  "Tại maybedding, chúng tôi tin rằng mỗi gia đình Việt đều xứng đáng có được những đêm nghỉ ngơi trọn vẹn nhất. Với hơn 10 năm kinh nghiệm trong ngành dệt may, chúng tôi không ngừng tìm kiếm những chất liệu tự nhiên, bền vững và áp dụng công nghệ tiên tiến nhất để tạo ra các sản phẩm chăn ga gối đệm đạt chuẩn quốc tế.";
+
+const about = await getAboutPage();
+const artisanImage = about?.image1 ?? fallbackArtisanImage;
+const artisanImageAlt = about?.image1 ? about.image1Alt : "Nghệ nhân dệt may kiểm tra chất liệu vải cao cấp";
+const textureImage = about?.image2 ?? fallbackTextureImage;
+const textureImageAlt = about?.image2 ? about.image2Alt : "Chất liệu vải trắng và đỏ cao cấp";
+const quote = about?.quote ?? fallbackQuote;
+const intro = about?.shortIntro ?? fallbackIntro;
 ---
 
 <section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop overflow-hidden">
@@ -10,10 +23,10 @@ const textureImage =
     <div class="flex-1 relative">
       <div class="grid grid-cols-2 gap-4">
         <div class="mt-12">
-          <img class="rounded-2xl shadow-xl w-full h-80 object-cover" src={artisanImage} alt="Nghệ nhân dệt may kiểm tra chất liệu vải cao cấp" />
+          <img class="rounded-2xl shadow-xl w-full h-80 object-cover" src={artisanImage} alt={artisanImageAlt} />
         </div>
         <div>
-          <img class="rounded-2xl shadow-xl w-full h-80 object-cover" src={textureImage} alt="Chất liệu vải trắng và đỏ cao cấp" />
+          <img class="rounded-2xl shadow-xl w-full h-80 object-cover" src={textureImage} alt={textureImageAlt} />
         </div>
       </div>
       <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-primary rounded-full -z-10 opacity-20"></div>
@@ -21,16 +34,16 @@ const textureImage =
     <div class="flex-1 space-y-6">
       <span class="text-primary font-bold tracking-widest uppercase text-xs">Về chúng tôi</span>
       <h3 class="text-display-lg-mobile md:text-headline-md text-on-surface">
-        Vì Một Việt Nam <br /><span class="text-secondary">Ngủ Ngon Hơn</span>
+        {
+          about?.heading ?? (
+            <>
+              Vì Một Việt Nam <br /><span class="text-secondary">Ngủ Ngon Hơn</span>
+            </>
+          )
+        }
       </h3>
-      <p class="text-body-lg text-on-surface-variant italic border-l-4 border-primary pl-6 py-2">
-        "Giấc ngủ không chỉ là sự nghỉ ngơi, đó là khởi nguồn của năng lượng và hạnh phúc."
-      </p>
-      <p class="text-body-md text-on-surface-variant leading-relaxed">
-        Tại maybedding, chúng tôi tin rằng mỗi gia đình Việt đều xứng đáng có được những đêm nghỉ ngơi trọn vẹn nhất. Với hơn
-        10 năm kinh nghiệm trong ngành dệt may, chúng tôi không ngừng tìm kiếm những chất liệu tự nhiên, bền vững và áp dụng
-        công nghệ tiên tiến nhất để tạo ra các sản phẩm chăn ga gối đệm đạt chuẩn quốc tế.
-      </p>
+      <p class="text-body-lg text-on-surface-variant italic border-l-4 border-primary pl-6 py-2">"{quote}"</p>
+      <p class="text-body-md text-on-surface-variant leading-relaxed">{intro}</p>
       <a href="/ve-chung-toi" class="flex items-center gap-2 text-primary font-bold group w-fit">
         Tìm hiểu thêm về tầm nhìn của chúng tôi
         <span class="material-symbols-outlined group-hover:translate-x-2 transition-transform">trending_flat</span>

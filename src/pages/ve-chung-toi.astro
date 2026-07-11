@@ -1,0 +1,57 @@
+---
+import { PortableText } from "astro-portabletext";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PortableImage from "../components/blog/PortableImage.astro";
+import ChatWidget from "../components/chat/ChatWidget.astro";
+import { getAboutPage } from "../lib/groq/aboutPage";
+
+const fallbackQuote = "Giấc ngủ không chỉ là sự nghỉ ngơi, đó là khởi nguồn của năng lượng và hạnh phúc.";
+const fallbackIntro =
+  "Tại maybedding, chúng tôi tin rằng mỗi gia đình Việt đều xứng đáng có được những đêm nghỉ ngơi trọn vẹn nhất. Với hơn 10 năm kinh nghiệm trong ngành dệt may, chúng tôi không ngừng tìm kiếm những chất liệu tự nhiên, bền vững và áp dụng công nghệ tiên tiến nhất để tạo ra các sản phẩm chăn ga gối đệm đạt chuẩn quốc tế.";
+
+const about = await getAboutPage();
+const heading = about?.heading ?? "Vì Một Việt Nam Ngủ Ngon Hơn";
+const quote = about?.quote ?? fallbackQuote;
+const hasBody = (about?.body?.length ?? 0) > 0;
+---
+
+<BaseLayout title="Về Chúng Tôi - maybedding" description={quote}>
+  <article class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-section-gap">
+    <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Về chúng tôi</span>
+    <h1 class="text-display-lg-mobile md:text-display-lg text-on-surface mb-6 leading-tight">{heading}</h1>
+    <p class="text-body-lg text-on-surface-variant italic border-l-4 border-primary pl-6 py-2 mb-8">"{quote}"</p>
+    {
+      about?.image1 && (
+        <img src={about.image1} alt={about.image1Alt ?? heading} class="w-full aspect-video object-cover rounded-2xl shadow-xl mb-10" />
+      )
+    }
+    <div class="prose-blog text-body-md text-on-surface-variant leading-relaxed">
+      {
+        hasBody ? (
+          <PortableText value={about!.body} components={{ type: { image: PortableImage } }} />
+        ) : (
+          <p>{about?.shortIntro ?? fallbackIntro}</p>
+        )
+      }
+    </div>
+    {
+      about?.image2 && (
+        <img src={about.image2} alt={about.image2Alt ?? heading} class="w-full aspect-video object-cover rounded-2xl shadow-xl mt-10" />
+      )
+    }
+  </article>
+  <ChatWidget />
+</BaseLayout>
+
+<style>
+  .prose-blog :global(h2) {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-blog :global(p) {
+    margin-bottom: 1.25rem;
+  }
+</style>

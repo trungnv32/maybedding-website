@@ -1,0 +1,44 @@
+---
+import { PortableText } from "astro-portabletext";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPolicyPageBySlug, getPolicyPageSlugs } from "../../lib/groq/policyPages";
+
+export async function getStaticPaths() {
+  const slugs = await getPolicyPageSlugs();
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const page = await getPolicyPageBySlug(slug!);
+
+if (!page) {
+  return Astro.redirect("/", 404);
+}
+---
+
+<BaseLayout title={`${page.title} - maybedding`} description={page.title}>
+  <article class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-section-gap">
+    <h1 class="text-display-lg-mobile md:text-display-lg text-on-surface mb-8 leading-tight">{page.title}</h1>
+    <div class="prose-blog text-body-md text-on-surface-variant leading-relaxed">
+      <PortableText value={page.body} />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .prose-blog :global(h2) {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-blog :global(p) {
+    margin-bottom: 1.25rem;
+  }
+  .prose-blog :global(ul) {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+</style>

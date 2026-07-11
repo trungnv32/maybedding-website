@@ -9,6 +9,12 @@ export const structure: StructureResolver = (S) =>
       S.listItem()
         .title("Thông tin chung (Site Settings)")
         .child(S.document().schemaType("siteSettings").documentId("siteSettings")),
+      S.listItem()
+        .title("Trang chủ (Hero)")
+        .child(S.document().schemaType("homepage").documentId("homepage")),
+      S.listItem()
+        .title("Về chúng tôi")
+        .child(S.document().schemaType("aboutPage").documentId("aboutPage")),
       S.divider(),
       S.documentTypeListItem("product").title("Sản phẩm"),
       S.documentTypeListItem("service").title("Dịch vụ"),

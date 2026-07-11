@@ -5,4 +5,5 @@ export default defineCliConfig({
     projectId: "w11gsv8j",
     dataset: "production",
   },
+  studioHost: "maybedding-website",
 });

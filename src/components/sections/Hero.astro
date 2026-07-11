@@ -1,6 +1,15 @@
 ---
-const heroImage =
+import { getHomepage } from "../../lib/groq/homepage";
+
+const fallbackHeroImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuDURmg7SP-ipIqu3_hX6R3YD5i7jMlVgYYz7HawtKXBFsOOIaNDyozarI4di00FwbBb1wxdXa5LjLcWVvYulMIn7Fw7Bwpke0adHb9qy9aMNccbwh7EBAWYgg21WeGDMVy9S-bA06gu0I3oNMUGWa39Bdkeq0-ohcBRCvRUo2qayuK9s5Wo1nFDDGi56mQRR8_2-fh-8JMc1M1USm1_ENxwm5IalqcsocfuzZBqgxQh2GF6hvAPH7AeK3Qdqqtb9NgTcatqEPmFDIc";
+const fallbackSubtext =
+  "Khám phá bộ sưu tập chăn ga gối đệm cao cấp, được thiết kế để chăm sóc sức khỏe và nâng tầm không gian sống của bạn.";
+
+const homepage = await getHomepage();
+const heroImage = homepage?.heroImage ?? fallbackHeroImage;
+const heroImageAlt = homepage?.heroImage ? homepage.heroImageAlt : "Phòng ngủ cao cấp với chăn ga gối đệm maybedding";
+const subtext = homepage?.heroSubtext ?? fallbackSubtext;
 ---
 
 <section class="relative h-[707px] flex items-center overflow-hidden">
@@ -9,7 +18,7 @@ const heroImage =
       class="w-full h-full bg-cover bg-center"
       style={`background-image: url('${heroImage}')`}
       role="img"
-      aria-label="Phòng ngủ cao cấp với chăn ga gối đệm maybedding"
+      aria-label={heroImageAlt}
     >
     </div>
     <div class="absolute inset-0 hero-gradient"></div>
@@ -17,10 +26,16 @@ const heroImage =
   <div class="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full">
     <div class="max-w-2xl animate-fade-in-up">
       <h2 class="text-display-lg-mobile md:text-display-lg text-on-surface mb-6 leading-tight">
-        Mang giấc ngủ trọn vẹn <br /><span class="text-primary">đến mọi nhà</span>
+        {
+          homepage?.heroHeadline ?? (
+            <>
+              Mang giấc ngủ trọn vẹn <br /><span class="text-primary">đến mọi nhà</span>
+            </>
+          )
+        }
       </h2>
       <p class="text-body-lg text-on-surface-variant mb-8 max-w-lg">
-        Khám phá bộ sưu tập chăn ga gối đệm cao cấp, được thiết kế để chăm sóc sức khỏe và nâng tầm không gian sống của bạn.
+        {subtext}
       </p>
       <div class="flex flex-wrap gap-4">
         <a
