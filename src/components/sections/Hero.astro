@@ -1,0 +1,41 @@
+---
+const heroImage =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuDURmg7SP-ipIqu3_hX6R3YD5i7jMlVgYYz7HawtKXBFsOOIaNDyozarI4di00FwbBb1wxdXa5LjLcWVvYulMIn7Fw7Bwpke0adHb9qy9aMNccbwh7EBAWYgg21WeGDMVy9S-bA06gu0I3oNMUGWa39Bdkeq0-ohcBRCvRUo2qayuK9s5Wo1nFDDGi56mQRR8_2-fh-8JMc1M1USm1_ENxwm5IalqcsocfuzZBqgxQh2GF6hvAPH7AeK3Qdqqtb9NgTcatqEPmFDIc";
+---
+
+<section class="relative h-[707px] flex items-center overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <div
+      class="w-full h-full bg-cover bg-center"
+      style={`background-image: url('${heroImage}')`}
+      role="img"
+      aria-label="Phòng ngủ cao cấp với chăn ga gối đệm maybedding"
+    >
+    </div>
+    <div class="absolute inset-0 hero-gradient"></div>
+  </div>
+  <div class="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full">
+    <div class="max-w-2xl animate-fade-in-up">
+      <h2 class="text-display-lg-mobile md:text-display-lg text-on-surface mb-6 leading-tight">
+        Mang giấc ngủ trọn vẹn <br /><span class="text-primary">đến mọi nhà</span>
+      </h2>
+      <p class="text-body-lg text-on-surface-variant mb-8 max-w-lg">
+        Khám phá bộ sưu tập chăn ga gối đệm cao cấp, được thiết kế để chăm sóc sức khỏe và nâng tầm không gian sống của bạn.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a
+          href="/san-pham"
+          class="bg-primary text-white px-8 py-4 rounded-lg font-bold hover:bg-red-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+        >
+          Khám phá ngay
+        </a>
+        <a
+          href="/san-pham"
+          class="bg-transparent border border-secondary text-secondary px-8 py-4 rounded-lg font-bold hover:bg-secondary/5 transition-all"
+        >
+          Xem bộ sưu tập
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

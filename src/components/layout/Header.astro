@@ -1,0 +1,36 @@
+---
+const navItems = [
+  { href: "/", label: "Trang Chủ", active: true },
+  { href: "/san-pham", label: "Sản Phẩm", active: false },
+  { href: "/dich-vu", label: "Dịch Vụ", active: false },
+  { href: "/lien-he", label: "Liên Hệ", active: false },
+];
+---
+
+<header class="sticky top-0 w-full z-50 bg-surface-bright border-b border-outline-variant/10 shadow-sm">
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4 flex justify-between items-center">
+    <div class="flex items-center gap-4">
+      <button class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity" id="drawer-open">menu</button>
+      <a href="/" class="text-headline-md font-bold text-primary tracking-tight">maybedding</a>
+    </div>
+    <nav class="hidden md:flex gap-8">
+      {
+        navItems.map((item) => (
+          <a
+            class={
+              item.active
+                ? "text-primary border-b-2 border-primary font-medium"
+                : "text-on-surface-variant/80 hover:text-secondary transition-colors duration-300"
+            }
+            href={item.href}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="flex items-center gap-4">
+      <span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">search</span>
+    </div>
+  </div>
+</header>

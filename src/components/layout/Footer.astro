@@ -1,0 +1,174 @@
+---
+import { getStoreLocations, type SanityStore } from "../../lib/groq/stores";
+import { getSiteSettings } from "../../lib/groq/siteSettings";
+
+const productLinks = [
+  { href: "#", label: "Bộ ga gối Tencel" },
+  { href: "#", label: "Chăn hè mát lạnh" },
+  { href: "#", label: "Gối cao su thiên nhiên" },
+  { href: "#", label: "Đệm lò xo túi" },
+];
+
+const quickLinks = [
+  { href: "/ve-chung-toi", label: "Về chúng tôi" },
+  { href: "#", label: "Chính sách bảo mật" },
+  { href: "#", label: "Hướng dẫn sử dụng" },
+  { href: "#", label: "Chăm sóc khách hàng" },
+];
+
+// Falls back to these until real `storeLocation` / `siteSettings` documents
+// exist in Sanity — remove once content is entered for real.
+const fallbackStores: SanityStore[] = [
+  { name: "maybedding Cầu Diễn", isMain: true, address: "Số 101 đường Cầu Diễn, Hà Nội" },
+  { name: "Chi nhánh Xuân Thủy", isMain: false, address: "Số 81 đường Xuân Thuỷ, Cầu Giấy, Hà Nội" },
+];
+const fallbackSettings = {
+  hotline: "0912.426.126",
+  email: "maybedding.official@gmail.com",
+  footerBlurb: "Chuyên cung cấp giải pháp giấc ngủ toàn diện cho gia đình Việt với tiêu chuẩn resort 5 sao ngay tại nhà.",
+  socialLinks: {
+    zalo: "https://zalo.me/0912426126",
+    facebook: "https://www.facebook.com/maybedding.official",
+    tiktok: "https://www.tiktok.com/@maybedding.official",
+    youtube: "https://www.youtube.com/@maybedding-changagoidem",
+  },
+};
+
+const sanityStores = await getStoreLocations();
+const stores = sanityStores.length > 0 ? sanityStores : fallbackStores;
+
+const sanitySettings = await getSiteSettings();
+const hotline = sanitySettings?.hotline ?? fallbackSettings.hotline;
+const email = sanitySettings?.email ?? fallbackSettings.email;
+const footerBlurb = sanitySettings?.footerBlurb ?? fallbackSettings.footerBlurb;
+const socialLinks = {
+  zalo: sanitySettings?.socialLinks?.zalo ?? fallbackSettings.socialLinks.zalo,
+  facebook: sanitySettings?.socialLinks?.facebook ?? fallbackSettings.socialLinks.facebook,
+  tiktok: sanitySettings?.socialLinks?.tiktok ?? fallbackSettings.socialLinks.tiktok,
+  youtube: sanitySettings?.socialLinks?.youtube ?? fallbackSettings.socialLinks.youtube,
+};
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-surface-container-lowest border-t border-outline-variant/20 pt-section-gap pb-12">
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter mb-16">
+    <div class="col-span-1 md:col-span-1">
+      <h2 class="text-headline-md text-primary mb-6">maybedding</h2>
+      <p class="text-on-surface-variant/80 text-sm mb-6 leading-relaxed">{footerBlurb}</p>
+      <div class="flex gap-4">
+        <a
+          aria-label="Zalo"
+          class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all"
+          href={socialLinks.zalo}
+          rel="noopener"
+          target="_blank"
+          title="Zalo"
+        >
+          <span class="material-symbols-outlined text-lg">chat</span>
+        </a>
+        <a
+          aria-label="Facebook"
+          class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all"
+          href={socialLinks.facebook}
+          rel="noopener"
+          target="_blank"
+          title="Facebook"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"
+            ><path
+              d="M22 12.06C22 6.53 17.52 2.04 12 2.04S2 6.53 2 12.06c0 5 3.66 9.13 8.44 9.88v-6.99H7.9v-2.89h2.54V9.85c0-2.51 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.89h-2.34v6.99C18.34 21.19 22 17.06 22 12.06z"
+            ></path></svg
+          >
+        </a>
+        <a
+          aria-label="TikTok"
+          class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all"
+          href={socialLinks.tiktok}
+          rel="noopener"
+          target="_blank"
+          title="TikTok"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"
+            ><path
+              d="M16.6 5.82c-.9-.94-1.4-2.18-1.4-3.82h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V8.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3c-1.36 0-2.42-.5-2.9-1.48z"
+            ></path></svg
+          >
+        </a>
+        <a
+          aria-label="YouTube"
+          class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all"
+          href={socialLinks.youtube}
+          rel="noopener"
+          target="_blank"
+          title="YouTube"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"
+            ><path
+              d="M23.5 6.2s-.23-1.64-.94-2.36c-.9-.94-1.9-.95-2.36-1C16.9 2.5 12 2.5 12 2.5h-.01s-4.9 0-8.2.34c-.46.05-1.46.06-2.36 1C.7 4.56.5 6.2.5 6.2S.27 8.1.27 10.02v1.85c0 1.9.23 3.82.23 3.82s.23 1.64.94 2.36c.9.94 2.08.9 2.6 1.01 1.9.18 8.06.34 8.06.34s4.9-.01 8.2-.34c.46-.05 1.46-.06 2.36-1 .71-.72.94-2.36.94-2.36s.23-1.9.23-3.82v-1.85c0-1.9-.23-3.82-.23-3.82zM9.65 14.6V7.9l6.44 3.36-6.44 3.35z"
+            ></path></svg
+          >
+        </a>
+      </div>
+    </div>
+    <div>
+      <h4 class="font-bold text-on-surface mb-6">Sản phẩm</h4>
+      <ul class="space-y-4">
+        {
+          productLinks.map((link) => (
+            <li>
+              <a class="text-on-surface-variant/80 hover:text-primary transition-colors text-sm" href={link.href}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-on-surface mb-6">Liên kết nhanh</h4>
+      <ul class="space-y-4">
+        {
+          quickLinks.map((link) => (
+            <li>
+              <a class="text-on-surface-variant/80 hover:text-primary transition-colors text-sm" href={link.href}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-on-surface mb-6">Thông tin liên hệ</h4>
+      <ul class="space-y-4">
+        {
+          stores.map((store) => (
+            <li class="flex gap-3 text-sm text-on-surface-variant/80">
+              <span class="material-symbols-outlined text-primary text-sm">location_on</span>
+              <span>
+                <span class="font-medium text-on-surface">{store.name}:</span> {store.address}
+              </span>
+            </li>
+          ))
+        }
+        <li class="flex gap-3 text-sm text-on-surface-variant/80">
+          <span class="material-symbols-outlined text-primary text-sm">phone</span>
+          {hotline}
+        </li>
+        <li class="flex gap-3 text-sm text-on-surface-variant/80">
+          <span class="material-symbols-outlined text-primary text-sm">mail</span>
+          {email}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop border-t border-outline-variant/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+    <p class="text-on-surface-variant/80 text-label-sm text-center md:text-left">© {year} maybedding. All rights reserved.</p>
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-on-surface-variant/40">payments</span>
+      <span class="material-symbols-outlined text-on-surface-variant/40">credit_card</span>
+      <span class="material-symbols-outlined text-on-surface-variant/40">account_balance_wallet</span>
+    </div>
+  </div>
+</footer>

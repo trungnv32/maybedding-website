@@ -1,0 +1,80 @@
+---
+import Header from "../components/layout/Header.astro";
+import MobileDrawer from "../components/layout/MobileDrawer.astro";
+import Footer from "../components/layout/Footer.astro";
+import SEO from "../components/seo/SEO.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: "website" | "article";
+}
+
+const {
+  title,
+  description = "maybedding - Chăn ga gối đệm may đo cao cấp cho giấc ngủ trọn vẹn của gia đình Việt.",
+  ogImage,
+  ogType = "website",
+} = Astro.props;
+
+// TODO(Phase 2): pull store data from Sanity `storeLocation` docs instead of
+// hardcoding here — kept in sync with Footer.astro's contact block for now.
+const stores = [
+  {
+    "@type": "LocalBusiness",
+    name: "maybedding Cầu Diễn",
+    address: { "@type": "PostalAddress", streetAddress: "Số 101 đường Cầu Diễn", addressLocality: "Hà Nội", addressCountry: "VN" },
+    telephone: "+84912426126",
+  },
+  {
+    "@type": "LocalBusiness",
+    name: "maybedding Xuân Thủy",
+    address: { "@type": "PostalAddress", streetAddress: "Số 81 đường Xuân Thuỷ, Cầu Giấy", addressLocality: "Hà Nội", addressCountry: "VN" },
+    telephone: "+84912426126",
+  },
+];
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <SEO title={title} description={description} image={ogImage} type={ogType} />
+    {
+      // Netlify sets CONTEXT to "deploy-preview" / "branch-deploy" for non-production
+      // builds — keep those out of search results (see plan §Blog / Verification).
+      import.meta.env.CONTEXT && import.meta.env.CONTEXT !== "production" && (
+        <meta name="robots" content="noindex, nofollow" />
+      )
+    }
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    {
+      stores.map((store) => (
+        <script type="application/ld+json" set:html={JSON.stringify(store)} />
+      ))
+    }
+  </head>
+  <body class="bg-surface text-on-surface">
+    <MobileDrawer />
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <script src="../scripts/ui.ts"></script>
+  </body>
+</html>

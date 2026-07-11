@@ -1,0 +1,46 @@
+---
+import { getServices, type SanityService } from "../../lib/groq/services";
+
+// Falls back to these placeholders until real `service` documents exist in
+// Sanity (Studio → Dịch vụ) — remove once content is entered for real.
+const fallbackServices: SanityService[] = [
+  {
+    icon: "local_shipping",
+    title: "Giao Hàng Tận Nơi",
+    description: "Miễn phí giao hàng trong nội thành và hỗ trợ vận chuyển toàn quốc nhanh chóng.",
+  },
+  {
+    icon: "sanitizer",
+    title: "Vệ Sinh Chuyên Nghiệp",
+    description: "Dịch vụ giặt sấy, vệ sinh nệm công nghệ cao, tiêu diệt 99% vi khuẩn và mùi hôi.",
+  },
+  {
+    icon: "design_services",
+    title: "Tư Vấn Decor",
+    description: "Đội ngũ chuyên gia hỗ trợ phối màu, chọn chất liệu phù hợp với phong cách căn phòng.",
+  },
+];
+
+const sanityServices = await getServices();
+const services = sanityServices.length > 0 ? sanityServices : fallbackServices;
+---
+
+<section class="bg-surface-container-low py-section-gap">
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center mb-16">
+    <h3 class="text-headline-md text-on-surface">Dịch Vụ Tận Tâm</h3>
+    <div class="w-20 h-1 bg-primary mx-auto mt-4"></div>
+  </div>
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-12">
+    {
+      services.map((service) => (
+        <div class="flex flex-col items-center text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow border border-outline-variant/5">
+          <div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <span class="material-symbols-outlined text-secondary text-3xl">{service.icon}</span>
+          </div>
+          <h4 class="text-xl text-on-surface mb-3">{service.title}</h4>
+          <p class="text-on-surface-variant text-body-md">{service.description}</p>
+        </div>
+      ))
+    }
+  </div>
+</section>

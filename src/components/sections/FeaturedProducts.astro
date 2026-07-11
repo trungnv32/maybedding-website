@@ -1,0 +1,51 @@
+---
+import ProductCard from "../product/ProductCard.astro";
+import { getFeaturedProducts, type SanityProduct } from "../../lib/groq/products";
+
+// Falls back to these placeholders until real `product` documents exist in
+// Sanity (Studio → Sản phẩm) — remove once content is entered for real.
+const fallbackProducts: SanityProduct[] = [
+  {
+    badge: "BÁN CHẠY NHẤT",
+    name: "Bộ Ga Tencel Lụa Cao Cấp",
+    price: "2.450.000đ",
+    description: "Chất liệu tự nhiên, mát lạnh và thân thiện với làn da nhạy cảm.",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDJkeAvVZKSX6zRzuMNjIqKvBiryHi1o7aIBTQtoX56zpLlmsV93MU7POTdUEE4Ntj8PNjdFwQYraUXvc7mpFd3XWfm6v1DRQMHm8n8vrvvfPh3ssdqkgenWdcJSLFOaH6F3FszJ9tM_QJYh218eH5g_f7i81qoT3aMxOGFdP4_5lw4fuJ8iH7rv_aQSDhugqAdpswj8c5SUUnWa7v_hI8EI-76uI8Rqtl5Sk-ZHrte-1kgZKJ6uZxggtJMdBQoCnF2tnl3oDsko4Y",
+  },
+  {
+    badge: "MỚI VỀ",
+    name: "Chăn Hè Cotton Organic",
+    price: "890.000đ",
+    description: "Trọng lượng siêu nhẹ, thoát nhiệt tốt, lý tưởng cho thời tiết nhiệt đới.",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDMp-P3wKaL8Ll8KDATR8MJ7mcSHG-9ElCpbX9eFGHVq2tDOdEekgdP5sJId1wn554R79V9eoc8ydAhWRTSvR4npqNV6EnDZ4gEEcxC2ENTpeJRIeYUdZ-D5bcVJ0TO00ncZBPp5BZtWdhphcLWe_sYI3ivA1XowDPrCbPTLFijdtL3U58faQJ07c9AWTTmETTX8Jl36-yCZtPRQ3YfQMTPY066iZ4g-IqpTgAzKlV4eSeXfmaS3wcP23-kRTNDMUGL7JNKMTp1QPU",
+  },
+  {
+    badge: "ƯU ĐÃI -20%",
+    name: "Gối Cao Su Non Công Thái Học",
+    price: "650.000đ",
+    description: "Nâng đỡ cổ vai gáy hoàn hảo, giảm mệt mỏi sau ngày dài làm việc.",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuAOjb7TSadNjMNod0tGyLPj9JDqL_Zk5DsmZxz1e8VFKZ2teVcxJ3YcyuUz4R79_vZ6XEy3Xo4SB4K3D0QhYngE5sJ-LoEsf6DxaG97zP_UwQrXp2qUsDYeTqMRX9ic9vmg9QVt69kF8V-MWELHsdD3llLMwGo81nMA3jLWcYpVrmhySOuA90WkLrAcWMyGfoIboE4EY8rfxZIK-wFcPCyixyD7ysQ40RQMO-yB0kFDMB3w-DANbYvCREh_h5lAJJ8pTll4KvLYO-w",
+  },
+];
+
+const sanityProducts = await getFeaturedProducts();
+const products = sanityProducts.length > 0 ? sanityProducts : fallbackProducts;
+---
+
+<section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+  <div class="flex justify-between items-end mb-12">
+    <div>
+      <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Sản phẩm tiêu biểu</span>
+      <h3 class="text-headline-md text-on-surface">Lựa Chọn Cho Giấc Ngủ</h3>
+    </div>
+    <a class="text-secondary font-bold flex items-center gap-1 hover:underline" href="/san-pham">
+      Xem tất cả <span class="material-symbols-outlined text-sm">arrow_forward</span>
+    </a>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+    {products.map((product) => <ProductCard {...product} />)}
+  </div>
+</section>

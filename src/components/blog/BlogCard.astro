@@ -1,0 +1,39 @@
+---
+interface Props {
+  slug: string;
+  title: string;
+  excerpt: string;
+  coverImage: string;
+  coverImageAlt: string;
+  category: string;
+  publishedAt: Date;
+}
+
+const { slug, title, excerpt, coverImage, coverImageAlt, category, publishedAt } = Astro.props;
+
+const formattedDate = publishedAt.toLocaleDateString("vi-VN", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+});
+---
+
+<a href={`/blog/${slug}`} class="group block bg-white rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm hover:shadow-md transition-all duration-500">
+  <div class="aspect-video overflow-hidden">
+    <img
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+      src={coverImage}
+      alt={coverImageAlt}
+      loading="lazy"
+    />
+  </div>
+  <div class="p-6">
+    <div class="flex items-center gap-3 text-label-sm text-secondary uppercase tracking-wide">
+      <span>{category}</span>
+      <span class="text-on-surface-variant/40">•</span>
+      <span class="text-on-surface-variant/60 normal-case tracking-normal">{formattedDate}</span>
+    </div>
+    <h3 class="text-xl text-on-surface mt-2 group-hover:text-primary transition-colors">{title}</h3>
+    <p class="text-on-surface-variant/70 text-sm mt-2 leading-relaxed">{excerpt}</p>
+  </div>
+</a>

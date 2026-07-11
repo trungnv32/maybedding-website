@@ -1,0 +1,57 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogCard from "../../components/blog/BlogCard.astro";
+
+export async function getStaticPaths({ paginate }: { paginate: Function }) {
+  const posts = (await getCollection("blog")).sort(
+    (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf()
+  );
+  return paginate(posts, { pageSize: 9 });
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout
+  title="Blog - maybedding"
+  description="Kiến thức và kinh nghiệm chăm sóc chăn ga gối đệm, giấc ngủ và sức khỏe cột sống từ đội ngũ maybedding."
+>
+  <section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="mb-12">
+      <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Blog</span>
+      <h1 class="text-headline-md text-on-surface">Kiến Thức & Kinh Nghiệm Giấc Ngủ</h1>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+      {
+        page.data.map((post: any) => (
+          <BlogCard
+            slug={post.id}
+            title={post.data.title}
+            excerpt={post.data.excerpt}
+            coverImage={post.data.coverImage}
+            coverImageAlt={post.data.coverImageAlt}
+            category={post.data.category}
+            publishedAt={post.data.publishedAt}
+          />
+        ))
+      }
+    </div>
+    {
+      (page.url.prev || page.url.next) && (
+        <div class="flex justify-center gap-4 mt-16">
+          {page.url.prev && (
+            <a href={page.url.prev} class="px-6 py-3 rounded-lg border border-secondary text-secondary font-bold hover:bg-secondary/5 transition-all">
+              Trang trước
+            </a>
+          )}
+          {page.url.next && (
+            <a href={page.url.next} class="px-6 py-3 rounded-lg border border-secondary text-secondary font-bold hover:bg-secondary/5 transition-all">
+              Trang sau
+            </a>
+          )}
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>

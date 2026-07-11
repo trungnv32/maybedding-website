@@ -1,0 +1,32 @@
+---
+interface Props {
+  badge: string;
+  name: string;
+  price: string;
+  description: string;
+  image: string;
+}
+
+const { badge, name, price, description, image } = Astro.props;
+---
+
+<div class="product-card group relative bg-white rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm hover:shadow-md transition-all duration-500">
+  <div class="aspect-4/5 overflow-hidden">
+    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src={image} alt={name} />
+  </div>
+  <div class="p-6">
+    <span class="text-secondary text-label-sm">{badge}</span>
+    <h4 class="text-xl text-on-surface mt-1">{name}</h4>
+    <p class="text-secondary font-bold text-lg mt-2">{price}</p>
+    <p class="text-on-surface-variant/70 text-sm mt-2">{description}</p>
+  </div>
+  <div class="product-action absolute inset-x-0 bottom-0 p-4 translate-y-full opacity-0 transition-all duration-300 bg-white/90 backdrop-blur-sm">
+    <button
+      type="button"
+      class="chat-open-btn w-full bg-primary text-white py-3 rounded font-bold hover:bg-red-800 transition-colors"
+      data-prefill={`Cho tôi hỏi thêm về sản phẩm "${name}"`}
+    >
+      Hỏi ngay về sản phẩm này
+    </button>
+  </div>
+</div>

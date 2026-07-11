@@ -1,0 +1,21 @@
+# Astro
+dist/
+.astro/
+
+# Sanity Studio
+studio/dist/
+studio/.sanity/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.production
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
