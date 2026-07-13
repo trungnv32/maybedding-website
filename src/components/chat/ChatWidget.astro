@@ -123,10 +123,13 @@
     }
   }
 
-  // Deliberately never disable/refocus `input` here — on mobile, disabling a
-  // focused element dismisses the on-screen keyboard, and refocusing later
-  // pops it back up, producing a jarring collapse/expand of the page layout
-  // on every message. Guard against double-submit with a plain flag instead.
+  // Tapping the "Gửi" button blurs the textarea before this handler even runs
+  // (mobile browsers move focus to whatever was tapped), which dismisses the
+  // on-screen keyboard. Re-focus synchronously, before any `await`, so the
+  // keyboard is reclaimed within the same trusted user-gesture call stack
+  // instead of staying closed until the reply arrives (or requiring the user
+  // to tap the textarea again). Never disable the textarea itself — that also
+  // dismisses the keyboard on mobile. Guard against double-submit with a flag.
   let isSending = false;
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -137,6 +140,7 @@
     isSending = true;
     appendBubble(value, "user");
     input.value = "";
+    input.focus();
     submitBtn.disabled = true;
     errorEl.classList.add("hidden");
     appendTypingIndicator();
