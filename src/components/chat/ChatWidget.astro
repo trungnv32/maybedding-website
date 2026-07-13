@@ -138,7 +138,7 @@
     try {
       const reply = await sendMessage(value);
       removeTypingIndicator();
-      appendBubble(reply, "bot");
+      if (reply) appendBubble(reply, "bot");
     } catch {
       removeTypingIndicator();
       errorEl.textContent = HOTLINE_FALLBACK;

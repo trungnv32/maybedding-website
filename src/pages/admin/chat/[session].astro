@@ -38,6 +38,13 @@ try {
 }
 
 const ROLE_LABEL: Record<string, string> = { human: "Khách", ai: "AI (Gia Hân)", tool: "AI (tra cứu dữ liệu)" };
+
+// Tool-call steps get logged as role "ai" too (e.g. "Calling call_human_zalo with input: {...}"),
+// not just role "tool" — filter those out by their distinctive prefix, not just by role.
+const visibleAiHistory = aiHistory
+  .filter((m) => (m.role === "human" || m.role === "ai") && !/^Calling .+ with input:/.test(m.content))
+  .reverse();
+const visibleExtraMessages = [...extraMessages].reverse();
 ---
 
 <!doctype html>
@@ -62,16 +69,14 @@ const ROLE_LABEL: Record<string, string> = { human: "Khách", ai: "AI (Gia Hân)
         <h2 class="font-bold text-on-surface mb-3">Hội thoại với AI</h2>
         <div class="space-y-2 max-h-96 overflow-y-auto bg-white border border-outline-variant/10 rounded-xl p-4">
           {
-            aiHistory
-              .filter((m) => m.role === "human" || m.role === "ai")
-              .map((m) => (
-                <div class="text-sm">
-                  <span class="font-bold text-secondary">{ROLE_LABEL[m.role] ?? m.role}:</span>{" "}
-                  <span class="text-on-surface-variant whitespace-pre-wrap">{m.content}</span>
-                </div>
-              ))
+            visibleAiHistory.map((m) => (
+              <div class="text-sm">
+                <span class="font-bold text-secondary">{ROLE_LABEL[m.role] ?? m.role}:</span>{" "}
+                <span class="text-on-surface-variant whitespace-pre-wrap">{m.content}</span>
+              </div>
+            ))
           }
-          {aiHistory.length === 0 && <p class="text-on-surface-variant/70 text-sm">Chưa có tin nhắn.</p>}
+          {visibleAiHistory.length === 0 && <p class="text-on-surface-variant/70 text-sm">Chưa có tin nhắn.</p>}
         </div>
       </section>
 
@@ -79,14 +84,14 @@ const ROLE_LABEL: Record<string, string> = { human: "Khách", ai: "AI (Gia Hân)
         <h2 class="font-bold text-on-surface mb-3">Tin nhắn ngoài AI (khi bot tạm dừng)</h2>
         <div class="space-y-2 bg-white border border-outline-variant/10 rounded-xl p-4">
           {
-            extraMessages.map((m) => (
+            visibleExtraMessages.map((m) => (
               <div class="text-sm">
                 <span class="font-bold text-secondary">{m.sender === "admin" ? "Bạn (admin)" : "Khách"}:</span>{" "}
                 <span class="text-on-surface-variant whitespace-pre-wrap">{m.content}</span>
               </div>
             ))
           }
-          {extraMessages.length === 0 && <p class="text-on-surface-variant/70 text-sm">Chưa có.</p>}
+          {visibleExtraMessages.length === 0 && <p class="text-on-surface-variant/70 text-sm">Chưa có.</p>}
         </div>
       </section>
 
