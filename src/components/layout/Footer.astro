@@ -8,11 +8,9 @@ const fallbackExploreLinks: SanityMenuItem[] = [
   { href: "/san-pham", label: "Sản phẩm" },
   { href: "/dich-vu", label: "Dịch vụ" },
   { href: "/blog", label: "Blog" },
-];
-const fallbackQuickLinks: SanityMenuItem[] = [
-  { href: "/ve-chung-toi", label: "Về chúng tôi" },
   { href: "/lien-he", label: "Liên hệ" },
 ];
+const fallbackQuickLinks: SanityMenuItem[] = [{ href: "/ve-chung-toi", label: "Về chúng tôi" }];
 
 const nav = await getNavigation();
 const exploreLinks = nav?.footerExploreMenu?.length ? nav.footerExploreMenu : fallbackExploreLinks;
@@ -62,7 +60,7 @@ const year = new Date().getFullYear();
 <footer class="bg-surface-container-lowest border-t border-outline-variant/20 pt-section-gap pb-12">
   <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter mb-16">
     <div class="col-span-1 md:col-span-1">
-      <h2 class="text-headline-md text-primary mb-6">maybedding</h2>
+      <img src="/logo.png" alt="maybedding" class="h-10 w-auto mb-6" />
       <p class="text-on-surface-variant/80 text-sm mb-6 leading-relaxed">{footerBlurb}</p>
       <div class="flex gap-4">
         <a
