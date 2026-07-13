@@ -10,9 +10,16 @@ export interface AdminSession {
   last_id: number;
 }
 
+async function assertOk(res: Response, label: string) {
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`${label}: n8n trả về HTTP ${res.status}. ${body.slice(0, 200)}`);
+  }
+}
+
 export async function listSessions(): Promise<AdminSession[]> {
   const res = await fetch(`${N8N_ADMIN_BASE}/admin-chat-sessions`, { headers: authHeaders() });
-  if (!res.ok) throw new Error("Failed to list sessions");
+  await assertOk(res, "Không tải được danh sách phiên chat");
   return res.json();
 }
 
@@ -33,7 +40,7 @@ export async function getMessages(sessionId: string): Promise<{ aiHistory: AiHis
   const res = await fetch(`${N8N_ADMIN_BASE}/admin-chat-messages?session=${encodeURIComponent(sessionId)}`, {
     headers: authHeaders(),
   });
-  if (!res.ok) throw new Error("Failed to get messages");
+  await assertOk(res, "Không tải được nội dung hội thoại");
   return res.json();
 }
 
@@ -43,5 +50,5 @@ export async function sendAdminMessage(sessionId: string, mode: "reply" | "nudge
     headers: { ...authHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify({ sessionId, mode, message }),
   });
-  if (!res.ok) throw new Error("Failed to send message");
+  await assertOk(res, "Không gửi được tin nhắn");
 }

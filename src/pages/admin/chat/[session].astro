@@ -13,17 +13,29 @@ const { session } = Astro.params;
 // "web%3Auuid" (still percent-encoded), so decode once before using it anywhere.
 const sessionId = decodeURIComponent(session!);
 
+let sendError: string | null = null;
 if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
   const message = formData.get("message")?.toString().trim();
   const mode = formData.get("mode")?.toString() === "nudge" ? "nudge" : "reply";
   if (message) {
-    await sendAdminMessage(sessionId, mode, message);
+    try {
+      await sendAdminMessage(sessionId, mode, message);
+      return Astro.redirect(`/admin/chat/${encodeURIComponent(sessionId)}`);
+    } catch (err) {
+      sendError = err instanceof Error ? err.message : "Lỗi không xác định";
+    }
   }
-  return Astro.redirect(`/admin/chat/${encodeURIComponent(sessionId)}`);
 }
 
-const { aiHistory, extraMessages } = await getMessages(sessionId);
+let aiHistory: Awaited<ReturnType<typeof getMessages>>["aiHistory"] = [];
+let extraMessages: Awaited<ReturnType<typeof getMessages>>["extraMessages"] = [];
+let loadError: string | null = null;
+try {
+  ({ aiHistory, extraMessages } = await getMessages(sessionId));
+} catch (err) {
+  loadError = err instanceof Error ? err.message : "Lỗi không xác định";
+}
 
 const ROLE_LABEL: Record<string, string> = { human: "Khách", ai: "AI (Gia Hân)", tool: "AI (tra cứu dữ liệu)" };
 ---
@@ -41,6 +53,10 @@ const ROLE_LABEL: Record<string, string> = { human: "Khách", ai: "AI (Gia Hân)
     <div class="max-w-2xl mx-auto px-6 py-10">
       <a href="/admin/chat" class="text-secondary font-bold text-sm hover:underline">&larr; Danh sách phiên</a>
       <h1 class="text-headline-md text-on-surface mt-2 mb-6 break-all">{sessionId}</h1>
+
+      {(loadError || sendError) && (
+        <p class="text-red-600 bg-red-50 border border-red-200 rounded-lg p-4 text-sm mb-6">{loadError ?? sendError}</p>
+      )}
 
       <section class="mb-8">
         <h2 class="font-bold text-on-surface mb-3">Hội thoại với AI</h2>

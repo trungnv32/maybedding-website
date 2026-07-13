@@ -8,7 +8,13 @@ if (!isAuthed(cookie)) {
   return Astro.redirect("/admin/login");
 }
 
-const sessions = await listSessions();
+let sessions: Awaited<ReturnType<typeof listSessions>> = [];
+let loadError: string | null = null;
+try {
+  sessions = await listSessions();
+} catch (err) {
+  loadError = err instanceof Error ? err.message : "Lỗi không xác định";
+}
 ---
 
 <!doctype html>
@@ -25,7 +31,9 @@ const sessions = await listSessions();
       <h1 class="text-headline-md text-on-surface mb-2">Các phiên chat trên website</h1>
       <p class="text-on-surface-variant/70 text-sm mb-8">Tự làm mới mỗi 20 giây. Bấm vào một phiên để xem và trả lời.</p>
       {
-        sessions.length === 0 ? (
+        loadError ? (
+          <p class="text-red-600 bg-red-50 border border-red-200 rounded-lg p-4 text-sm">{loadError}</p>
+        ) : sessions.length === 0 ? (
           <p class="text-on-surface-variant/70">Chưa có phiên chat nào.</p>
         ) : (
           <ul class="space-y-3">
