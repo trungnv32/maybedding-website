@@ -11,20 +11,20 @@ const { badge, name, price, description, image } = Astro.props;
 ---
 
 <div class="product-card group relative bg-white rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm hover:shadow-md transition-all duration-500">
-  <div class="aspect-4/5 overflow-hidden">
-    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src={image} alt={name} />
+  <div class="aspect-4/5 overflow-hidden bg-surface-container-low">
+    <img class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" src={image} alt={name} />
   </div>
   <div class="p-6">
     <span class="text-secondary text-label-sm">{badge}</span>
     <h4 class="text-xl text-on-surface mt-1">{name}</h4>
     <p class="text-secondary font-bold text-lg mt-2">{price}</p>
-    <p class="text-on-surface-variant/70 text-sm mt-2">{description}</p>
+    <p class="text-on-surface-variant/70 text-sm mt-2 line-clamp-4">{description}</p>
     <button
       type="button"
       class="chat-open-btn w-full mt-4 bg-primary text-white py-3 rounded font-bold hover:bg-red-800 transition-colors"
       data-prefill={`Cho tôi hỏi thêm về sản phẩm "${name}"`}
     >
-      Hỏi ngay về sản phẩm này
+      Tìm hiểu thêm
     </button>
   </div>
 </div>
