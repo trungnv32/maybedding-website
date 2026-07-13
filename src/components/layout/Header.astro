@@ -1,10 +1,20 @@
 ---
-const navItems = [
-  { href: "/", label: "Trang Chủ", active: true },
-  { href: "/san-pham", label: "Sản Phẩm", active: false },
-  { href: "/dich-vu", label: "Dịch Vụ", active: false },
-  { href: "/lien-he", label: "Liên Hệ", active: false },
+import { getNavigation, type SanityMenuItem } from "../../lib/groq/navigation";
+
+const fallbackHeaderMenu: SanityMenuItem[] = [
+  { href: "/", label: "Trang Chủ" },
+  { href: "/san-pham", label: "Sản Phẩm" },
+  { href: "/dich-vu", label: "Dịch Vụ" },
+  { href: "/lien-he", label: "Liên Hệ" },
 ];
+
+const nav = await getNavigation();
+const navItems = nav?.headerMenu?.length ? nav.headerMenu : fallbackHeaderMenu;
+
+const currentPath = Astro.url.pathname;
+function isActive(href: string) {
+  return href === "/" ? currentPath === "/" : currentPath.startsWith(href);
+}
 ---
 
 <header class="sticky top-0 w-full z-50 bg-surface-bright border-b border-outline-variant/10 shadow-sm">
@@ -18,7 +28,7 @@ const navItems = [
         navItems.map((item) => (
           <a
             class={
-              item.active
+              isActive(item.href)
                 ? "text-primary border-b-2 border-primary font-medium"
                 : "text-on-surface-variant/80 hover:text-secondary transition-colors duration-300"
             }

@@ -2,17 +2,21 @@
 import { getStoreLocations, type SanityStore } from "../../lib/groq/stores";
 import { getSiteSettings } from "../../lib/groq/siteSettings";
 import { getPolicyPages } from "../../lib/groq/policyPages";
+import { getNavigation, type SanityMenuItem } from "../../lib/groq/navigation";
 
-const exploreLinks = [
+const fallbackExploreLinks: SanityMenuItem[] = [
   { href: "/san-pham", label: "Sản phẩm" },
   { href: "/dich-vu", label: "Dịch vụ" },
   { href: "/blog", label: "Blog" },
 ];
-
-const baseQuickLinks = [
+const fallbackQuickLinks: SanityMenuItem[] = [
   { href: "/ve-chung-toi", label: "Về chúng tôi" },
   { href: "/lien-he", label: "Liên hệ" },
 ];
+
+const nav = await getNavigation();
+const exploreLinks = nav?.footerExploreMenu?.length ? nav.footerExploreMenu : fallbackExploreLinks;
+const baseQuickLinks = nav?.footerQuickMenu?.length ? nav.footerQuickMenu : fallbackQuickLinks;
 
 const policyPages = await getPolicyPages();
 const quickLinks = [

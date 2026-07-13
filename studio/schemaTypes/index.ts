@@ -6,5 +6,16 @@ import siteSettings from "./siteSettings";
 import policyPage from "./policyPage";
 import homepage from "./homepage";
 import aboutPage from "./aboutPage";
+import navigation from "./navigation";
 
-export const schemaTypes = [product, service, blogPost, storeLocation, siteSettings, policyPage, homepage, aboutPage];
+export const schemaTypes = [
+  product,
+  service,
+  blogPost,
+  storeLocation,
+  siteSettings,
+  policyPage,
+  homepage,
+  aboutPage,
+  navigation,
+];

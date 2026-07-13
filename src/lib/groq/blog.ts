@@ -28,8 +28,6 @@ const DETAIL_QUERY = `*[_type == "blogPost" && slug.current == $slug && defined(
   "metaTitle": seo.metaTitle, "metaDescription": seo.metaDescription
 }`;
 
-const SLUGS_QUERY = `*[_type == "blogPost" && defined(coverImage.asset)].slug.current`;
-
 type RawSummary = {
   slug: string;
   title: string;
@@ -61,10 +59,6 @@ function toSummary(p: RawSummary): SanityBlogPostSummary {
 export async function getBlogPosts(): Promise<SanityBlogPostSummary[]> {
   const results = await sanityClient.fetch<RawSummary[]>(LIST_QUERY);
   return results.map(toSummary);
-}
-
-export async function getBlogPostSlugs(): Promise<string[]> {
-  return sanityClient.fetch<string[]>(SLUGS_QUERY);
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<SanityBlogPost | null> {

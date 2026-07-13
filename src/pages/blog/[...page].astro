@@ -3,12 +3,25 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import BlogCard from "../../components/blog/BlogCard.astro";
 import { getBlogPosts } from "../../lib/groq/blog";
 
-export async function getStaticPaths({ paginate }: { paginate: Function }) {
-  const posts = await getBlogPosts();
-  return paginate(posts, { pageSize: 9 });
+const PAGE_SIZE = 9;
+
+// No getStaticPaths in server mode: pagination is computed per-request from the
+// [...page] rest param so new posts show up immediately without a rebuild.
+const pageParam = Astro.params.page;
+const pageNum = pageParam ? Number(pageParam) : 1;
+if (pageParam && (!Number.isInteger(pageNum) || pageNum < 2 || String(pageNum) !== pageParam)) {
+  return Astro.rewrite("/404");
 }
 
-const { page } = Astro.props;
+const allPosts = await getBlogPosts();
+const totalPages = Math.max(1, Math.ceil(allPosts.length / PAGE_SIZE));
+if (pageNum > totalPages) {
+  return Astro.rewrite("/404");
+}
+
+const posts = allPosts.slice((pageNum - 1) * PAGE_SIZE, pageNum * PAGE_SIZE);
+const prevUrl = pageNum > 1 ? (pageNum === 2 ? "/blog" : `/blog/${pageNum - 1}`) : null;
+const nextUrl = pageNum < totalPages ? `/blog/${pageNum + 1}` : null;
 ---
 
 <BaseLayout
@@ -21,9 +34,9 @@ const { page } = Astro.props;
       <h1 class="text-headline-md text-on-surface">Kiến Thức & Kinh Nghiệm Giấc Ngủ</h1>
     </div>
     {
-      page.data.length > 0 ? (
+      posts.length > 0 ? (
         <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-          {page.data.map((post: any) => (
+          {posts.map((post) => (
             <BlogCard
               slug={post.slug}
               title={post.title}
@@ -40,15 +53,15 @@ const { page } = Astro.props;
       )
     }
     {
-      (page.url.prev || page.url.next) && (
+      (prevUrl || nextUrl) && (
         <div class="flex justify-center gap-4 mt-16">
-          {page.url.prev && (
-            <a href={page.url.prev} class="px-6 py-3 rounded-lg border border-secondary text-secondary font-bold hover:bg-secondary/5 transition-all">
+          {prevUrl && (
+            <a href={prevUrl} class="px-6 py-3 rounded-lg border border-secondary text-secondary font-bold hover:bg-secondary/5 transition-all">
               Trang trước
             </a>
           )}
-          {page.url.next && (
-            <a href={page.url.next} class="px-6 py-3 rounded-lg border border-secondary text-secondary font-bold hover:bg-secondary/5 transition-all">
+          {nextUrl && (
+            <a href={nextUrl} class="px-6 py-3 rounded-lg border border-secondary text-secondary font-bold hover:bg-secondary/5 transition-all">
               Trang sau
             </a>
           )}

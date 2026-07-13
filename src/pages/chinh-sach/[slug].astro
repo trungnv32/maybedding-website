@@ -1,18 +1,13 @@
 ---
 import { PortableText } from "astro-portabletext";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getPolicyPageBySlug, getPolicyPageSlugs } from "../../lib/groq/policyPages";
-
-export async function getStaticPaths() {
-  const slugs = await getPolicyPageSlugs();
-  return slugs.map((slug) => ({ params: { slug } }));
-}
+import { getPolicyPageBySlug } from "../../lib/groq/policyPages";
 
 const { slug } = Astro.params;
 const page = await getPolicyPageBySlug(slug!);
 
 if (!page) {
-  return Astro.redirect("/", 404);
+  return Astro.rewrite("/404");
 }
 ---
 

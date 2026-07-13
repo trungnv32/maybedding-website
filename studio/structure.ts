@@ -7,6 +7,9 @@ export const structure: StructureResolver = (S) =>
     .title("Nội dung")
     .items([
       S.listItem()
+        .title("Menu điều hướng")
+        .child(S.document().schemaType("navigation").documentId("navigation")),
+      S.listItem()
         .title("Thông tin chung (Site Settings)")
         .child(S.document().schemaType("siteSettings").documentId("siteSettings")),
       S.listItem()

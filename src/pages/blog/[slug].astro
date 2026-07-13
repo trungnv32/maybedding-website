@@ -2,18 +2,13 @@
 import { PortableText } from "astro-portabletext";
 import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
 import PortableImage from "../../components/blog/PortableImage.astro";
-import { getBlogPostBySlug, getBlogPostSlugs } from "../../lib/groq/blog";
-
-export async function getStaticPaths() {
-  const slugs = await getBlogPostSlugs();
-  return slugs.map((slug) => ({ params: { slug } }));
-}
+import { getBlogPostBySlug } from "../../lib/groq/blog";
 
 const { slug } = Astro.params;
 const post = await getBlogPostBySlug(slug!);
 
 if (!post) {
-  return Astro.redirect("/blog", 404);
+  return Astro.rewrite("/404");
 }
 
 const description = post.metaDescription ?? post.excerpt;
