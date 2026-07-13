@@ -52,7 +52,7 @@ const visibleExtraMessages = extraMessages;
 <html lang="vi">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="15" />
+    <meta http-equiv="refresh" content="5" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{sessionId} - maybedding</title>
     <meta name="robots" content="noindex, nofollow" />
@@ -96,7 +96,7 @@ const visibleExtraMessages = extraMessages;
         </div>
       </section>
 
-      <form method="POST" class="bg-secondary rounded-xl p-6">
+      <form id="reply-form" method="POST" class="bg-secondary rounded-xl p-6">
         <label class="flex items-center gap-2 text-white text-sm mb-2">
           <input type="radio" name="mode" value="reply" checked /> Gửi thẳng cho khách (bot tạm dừng ~10 phút)
         </label>
@@ -115,5 +115,37 @@ const visibleExtraMessages = extraMessages;
         </button>
       </form>
     </div>
+
+    <script define:vars={{ sessionId }}>
+      // The page auto-refreshes (meta refresh) to pick up new messages, which resets any
+      // in-progress form to its defaults — silently switching a half-typed "Nhắc AI" draft
+      // back to "Gửi thẳng cho khách" and losing the typed text. Persist the draft across
+      // that refresh via localStorage, keyed per session so switching sessions never leaks.
+      const STORAGE_KEY = "admin-chat-draft:" + sessionId;
+      const form = document.getElementById("reply-form");
+      const textarea = form?.querySelector('textarea[name="message"]');
+      const modeRadios = form?.querySelectorAll('input[name="mode"]');
+
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (saved) {
+          if (saved.mode) {
+            const radio = form?.querySelector(`input[name="mode"][value="${saved.mode}"]`);
+            if (radio) radio.checked = true;
+          }
+          if (saved.message && textarea) textarea.value = saved.message;
+        }
+      } catch {}
+
+      function saveDraft() {
+        const mode = form?.querySelector('input[name="mode"]:checked')?.value ?? "reply";
+        const message = textarea?.value ?? "";
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ mode, message }));
+      }
+
+      modeRadios?.forEach((r) => r.addEventListener("change", saveDraft));
+      textarea?.addEventListener("input", saveDraft);
+      form?.addEventListener("submit", () => localStorage.removeItem(STORAGE_KEY));
+    </script>
   </body>
 </html>
