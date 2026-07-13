@@ -41,10 +41,11 @@ const ROLE_LABEL: Record<string, string> = { human: "Khách", ai: "AI (Gia Hân)
 
 // Tool-call steps get logged as role "ai" too (e.g. "Calling call_human_zalo with input: {...}"),
 // not just role "tool" — filter those out by their distinctive prefix, not just by role.
-const visibleAiHistory = aiHistory
-  .filter((m) => (m.role === "human" || m.role === "ai") && !/^Calling .+ with input:/.test(m.content))
-  .reverse();
-const visibleExtraMessages = [...extraMessages].reverse();
+// Oldest-first, newest at the bottom — same reading order as any normal chat app.
+const visibleAiHistory = aiHistory.filter(
+  (m) => (m.role === "human" || m.role === "ai") && !/^Calling .+ with input:/.test(m.content)
+);
+const visibleExtraMessages = extraMessages;
 ---
 
 <!doctype html>
