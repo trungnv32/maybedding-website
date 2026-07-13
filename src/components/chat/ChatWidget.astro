@@ -123,14 +123,20 @@
     }
   }
 
+  // Deliberately never disable/refocus `input` here — on mobile, disabling a
+  // focused element dismisses the on-screen keyboard, and refocusing later
+  // pops it back up, producing a jarring collapse/expand of the page layout
+  // on every message. Guard against double-submit with a plain flag instead.
+  let isSending = false;
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (isSending) return;
     const value = input.value.trim();
     if (!value) return;
 
+    isSending = true;
     appendBubble(value, "user");
     input.value = "";
-    input.disabled = true;
     submitBtn.disabled = true;
     errorEl.classList.add("hidden");
     appendTypingIndicator();
@@ -144,9 +150,8 @@
       errorEl.textContent = HOTLINE_FALLBACK;
       errorEl.classList.remove("hidden");
     } finally {
-      input.disabled = false;
       submitBtn.disabled = false;
-      input.focus();
+      isSending = false;
     }
   });
 
