@@ -54,7 +54,10 @@ function toSanityProduct(p: RawProduct): SanityProduct {
     name: p.name,
     price: `${p.price.toLocaleString("vi-VN")}đ`,
     description: p.description ?? "",
-    image: urlFor(p.mainImage).width(600).height(750).url(),
+    // No forced height here: the card/detail markup renders with object-contain (fit, not
+    // crop), so requesting a fixed height would just make Sanity crop the source photo down
+    // to that box server-side before the browser ever gets to letterbox it losslessly.
+    image: urlFor(p.mainImage).width(600).url(),
   };
 }
 
@@ -73,7 +76,7 @@ export async function getProductBySlug(slug: string): Promise<SanityProductDetai
   if (!p) return null;
   return {
     ...toSanityProduct(p),
-    image: urlFor(p.mainImage).width(1000).height(1000).url(),
+    image: urlFor(p.mainImage).width(1000).url(),
     category: CATEGORY_LABELS[p.category ?? ""] ?? "",
     body: p.body ?? [],
   };
