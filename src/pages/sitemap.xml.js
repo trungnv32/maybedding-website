@@ -1,18 +1,20 @@
 import { getBlogPosts } from "../lib/groq/blog";
 import { getPolicyPages } from "../lib/groq/policyPages";
+import { getAllProducts } from "../lib/groq/products";
 
 // @astrojs/sitemap only discovers static-shaped routes; in SSR mode it can't see
-// dynamic blog/policy slugs, so this hand-rolled endpoint fetches them per-request
-// the same way rss.xml.js does.
+// dynamic blog/policy/product slugs, so this hand-rolled endpoint fetches them
+// per-request the same way rss.xml.js does.
 const STATIC_PATHS = ["/", "/san-pham", "/dich-vu", "/blog", "/ve-chung-toi", "/lien-he"];
 
 export async function GET(context) {
-  const [posts, policyPages] = await Promise.all([getBlogPosts(), getPolicyPages()]);
+  const [posts, policyPages, products] = await Promise.all([getBlogPosts(), getPolicyPages(), getAllProducts()]);
 
   const paths = [
     ...STATIC_PATHS,
     ...posts.map((post) => `/blog/${post.slug}`),
     ...policyPages.map((page) => `/chinh-sach/${page.slug}`),
+    ...products.map((product) => `/san-pham/${product.slug}`),
   ];
 
   const urls = paths

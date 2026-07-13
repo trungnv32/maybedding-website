@@ -27,7 +27,16 @@ export default defineType({
       fields: [defineField({ name: "alt", title: "Alt text", type: "string", validation: (r) => r.required() })],
       validation: (r) => r.required(),
     }),
-    defineField({ name: "shortDescription", title: "Mô tả ngắn", type: "text", rows: 3 }),
+    defineField({ name: "shortDescription", title: "Mô tả ngắn (hiện ở thẻ sản phẩm)", type: "text", rows: 3 }),
+    defineField({
+      name: "body",
+      title: "Mô tả đầy đủ (hiện ở trang chi tiết sản phẩm)",
+      type: "array",
+      of: [
+        { type: "block" },
+        { type: "image", options: { hotspot: true }, fields: [{ name: "alt", title: "Alt text", type: "string" }] },
+      ],
+    }),
     defineField({
       name: "category",
       title: "Danh mục",

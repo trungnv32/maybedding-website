@@ -1,0 +1,64 @@
+---
+import { PortableText } from "astro-portabletext";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PortableImage from "../../components/blog/PortableImage.astro";
+import ChatWidget from "../../components/chat/ChatWidget.astro";
+import { getProductBySlug } from "../../lib/groq/products";
+
+const { slug } = Astro.params;
+const product = await getProductBySlug(slug!);
+
+if (!product) {
+  return Astro.rewrite("/404");
+}
+
+const hasBody = product.body.length > 0;
+---
+
+<BaseLayout title={`${product.name} - maybedding`} description={product.description}>
+  <article class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <a href="/san-pham" class="text-secondary font-bold flex items-center gap-1 hover:underline w-fit mb-8">
+      <span class="material-symbols-outlined text-sm">arrow_back</span> Quay lại danh sách sản phẩm
+    </a>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+      <div class="aspect-square overflow-hidden rounded-2xl bg-surface-container-low">
+        <img src={product.image} alt={product.name} class="w-full h-full object-contain" />
+      </div>
+      <div>
+        {product.category && <span class="text-secondary text-label-sm">{product.category}</span>}
+        {product.badge && <span class="block text-primary font-bold uppercase text-xs tracking-widest mt-1">{product.badge}</span>}
+        <h1 class="text-headline-md text-on-surface mt-2">{product.name}</h1>
+        <p class="text-secondary font-bold text-2xl mt-3">{product.price}</p>
+        <div class="prose-blog text-body-md text-on-surface-variant leading-relaxed mt-6">
+          {hasBody ? <PortableText value={product.body} components={{ type: { image: PortableImage } }} /> : <p>{product.description}</p>}
+        </div>
+        <button
+          type="button"
+          class="chat-open-btn w-full md:w-auto mt-8 bg-primary text-white px-10 py-4 rounded-lg font-bold hover:bg-red-800 transition-colors"
+          data-prefill={`Cho tôi hỏi thêm về sản phẩm "${product.name}"`}
+        >
+          Hỏi ngay về sản phẩm này
+        </button>
+      </div>
+    </div>
+  </article>
+  <ChatWidget />
+</BaseLayout>
+
+<style>
+  .prose-blog :global(h2) {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-blog :global(p) {
+    margin-bottom: 1rem;
+  }
+  .prose-blog :global(ul) {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+</style>
