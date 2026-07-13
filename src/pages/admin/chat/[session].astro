@@ -117,10 +117,11 @@ const visibleExtraMessages = extraMessages;
     </div>
 
     <script define:vars={{ sessionId }}>
-      // The page auto-refreshes (meta refresh) to pick up new messages, which resets any
-      // in-progress form to its defaults — silently switching a half-typed "Nhắc AI" draft
-      // back to "Gửi thẳng cho khách" and losing the typed text. Persist the draft across
-      // that refresh via localStorage, keyed per session so switching sessions never leaks.
+      // The page auto-refreshes (meta refresh) to pick up new messages, and every submit
+      // reloads the page too — both reset the form to its HTML defaults, silently switching
+      // a chosen "Nhắc AI" mode back to "Gửi thẳng cho khách". Persist the draft (and, once
+      // sent, just the last-used mode) via localStorage, keyed per session so switching
+      // sessions never leaks state between them.
       const STORAGE_KEY = "admin-chat-draft:" + sessionId;
       const form = document.getElementById("reply-form");
       const textarea = form?.querySelector('textarea[name="message"]');
@@ -145,7 +146,12 @@ const visibleExtraMessages = extraMessages;
 
       modeRadios?.forEach((r) => r.addEventListener("change", saveDraft));
       textarea?.addEventListener("input", saveDraft);
-      form?.addEventListener("submit", () => localStorage.removeItem(STORAGE_KEY));
+      // On send, keep the chosen mode (so it carries over to the next message in this
+      // session) but clear the message text, since that draft has now been sent.
+      form?.addEventListener("submit", () => {
+        const mode = form?.querySelector('input[name="mode"]:checked')?.value ?? "reply";
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ mode, message: "" }));
+      });
     </script>
   </body>
 </html>
