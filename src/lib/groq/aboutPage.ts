@@ -36,9 +36,9 @@ export async function getAboutPage(): Promise<SanityAboutPage | null> {
     quote: raw.quote,
     shortIntro: raw.shortIntro,
     body: raw.body ?? [],
-    image1: raw.image1?.hasAsset ? urlFor(raw.image1).width(800).height(640).url() : undefined,
+    image1: raw.image1?.hasAsset ? urlFor(raw.image1).width(1280).height(720).url() : undefined,
     image1Alt: raw.image1?.alt,
-    image2: raw.image2?.hasAsset ? urlFor(raw.image2).width(800).height(640).url() : undefined,
+    image2: raw.image2?.hasAsset ? urlFor(raw.image2).width(1280).height(720).url() : undefined,
     image2Alt: raw.image2?.alt,
   };
 }
