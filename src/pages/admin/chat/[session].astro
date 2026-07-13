@@ -72,7 +72,7 @@ const visibleExtraMessages = [...extraMessages].reverse();
             visibleAiHistory.map((m) => (
               <div class="text-sm">
                 <span class="font-bold text-secondary">{ROLE_LABEL[m.role] ?? m.role}:</span>{" "}
-                <span class="text-on-surface-variant whitespace-pre-wrap">{m.content}</span>
+                <span class="text-on-surface-variant whitespace-pre-wrap break-words">{m.content}</span>
               </div>
             ))
           }
@@ -87,7 +87,7 @@ const visibleExtraMessages = [...extraMessages].reverse();
             visibleExtraMessages.map((m) => (
               <div class="text-sm">
                 <span class="font-bold text-secondary">{m.sender === "admin" ? "Bạn (admin)" : "Khách"}:</span>{" "}
-                <span class="text-on-surface-variant whitespace-pre-wrap">{m.content}</span>
+                <span class="text-on-surface-variant whitespace-pre-wrap break-words">{m.content}</span>
               </div>
             ))
           }
@@ -107,7 +107,7 @@ const visibleExtraMessages = [...extraMessages].reverse();
           required
           rows="3"
           placeholder="Nhập nội dung..."
-          class="w-full px-4 py-3 rounded-lg border-none mb-4 outline-none"
+          class="w-full px-4 py-3 rounded-lg border-none mb-4 outline-none bg-white text-black placeholder:text-gray-400"
         ></textarea>
         <button type="submit" class="bg-white text-secondary px-8 py-3 rounded-lg font-bold hover:bg-white/90 transition-colors">
           Gửi
