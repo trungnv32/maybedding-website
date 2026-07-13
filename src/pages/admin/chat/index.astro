@@ -1,0 +1,48 @@
+---
+import "../../../styles/global.css";
+import { isAuthed } from "../../../lib/adminAuth";
+import { listSessions } from "../../../lib/adminChatApi";
+
+const cookie = Astro.cookies.get("admin_auth")?.value;
+if (!isAuthed(cookie)) {
+  return Astro.redirect("/admin/login");
+}
+
+const sessions = await listSessions();
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="20" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Các phiên chat - maybedding</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body class="bg-surface text-on-surface min-h-screen">
+    <div class="max-w-2xl mx-auto px-6 py-10">
+      <h1 class="text-headline-md text-on-surface mb-2">Các phiên chat trên website</h1>
+      <p class="text-on-surface-variant/70 text-sm mb-8">Tự làm mới mỗi 20 giây. Bấm vào một phiên để xem và trả lời.</p>
+      {
+        sessions.length === 0 ? (
+          <p class="text-on-surface-variant/70">Chưa có phiên chat nào.</p>
+        ) : (
+          <ul class="space-y-3">
+            {sessions.map((s) => (
+              <li>
+                <a
+                  href={`/admin/chat/${encodeURIComponent(s.session_id)}`}
+                  class="block bg-white border border-outline-variant/10 rounded-xl p-4 shadow-sm hover:shadow-md transition-all"
+                >
+                  <div class="font-bold text-primary break-all">{s.session_id}</div>
+                  <div class="text-on-surface-variant/70 text-sm mt-1">{s.message_count} tin nhắn</div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </body>
+</html>

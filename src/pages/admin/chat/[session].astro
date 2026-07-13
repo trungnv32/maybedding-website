@@ -1,0 +1,97 @@
+---
+import "../../../styles/global.css";
+import { isAuthed } from "../../../lib/adminAuth";
+import { getMessages, sendAdminMessage } from "../../../lib/adminChatApi";
+
+const cookie = Astro.cookies.get("admin_auth")?.value;
+if (!isAuthed(cookie)) {
+  return Astro.redirect("/admin/login");
+}
+
+const { session } = Astro.params;
+// Astro does not auto-decode dynamic route params — the URL segment arrives as
+// "web%3Auuid" (still percent-encoded), so decode once before using it anywhere.
+const sessionId = decodeURIComponent(session!);
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const message = formData.get("message")?.toString().trim();
+  const mode = formData.get("mode")?.toString() === "nudge" ? "nudge" : "reply";
+  if (message) {
+    await sendAdminMessage(sessionId, mode, message);
+  }
+  return Astro.redirect(`/admin/chat/${encodeURIComponent(sessionId)}`);
+}
+
+const { aiHistory, extraMessages } = await getMessages(sessionId);
+
+const ROLE_LABEL: Record<string, string> = { human: "Khách", ai: "AI (Gia Hân)", tool: "AI (tra cứu dữ liệu)" };
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="15" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{sessionId} - maybedding</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body class="bg-surface text-on-surface min-h-screen">
+    <div class="max-w-2xl mx-auto px-6 py-10">
+      <a href="/admin/chat" class="text-secondary font-bold text-sm hover:underline">&larr; Danh sách phiên</a>
+      <h1 class="text-headline-md text-on-surface mt-2 mb-6 break-all">{sessionId}</h1>
+
+      <section class="mb-8">
+        <h2 class="font-bold text-on-surface mb-3">Hội thoại với AI</h2>
+        <div class="space-y-2 max-h-96 overflow-y-auto bg-white border border-outline-variant/10 rounded-xl p-4">
+          {
+            aiHistory
+              .filter((m) => m.role === "human" || m.role === "ai")
+              .map((m) => (
+                <div class="text-sm">
+                  <span class="font-bold text-secondary">{ROLE_LABEL[m.role] ?? m.role}:</span>{" "}
+                  <span class="text-on-surface-variant whitespace-pre-wrap">{m.content}</span>
+                </div>
+              ))
+          }
+          {aiHistory.length === 0 && <p class="text-on-surface-variant/70 text-sm">Chưa có tin nhắn.</p>}
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="font-bold text-on-surface mb-3">Tin nhắn ngoài AI (khi bot tạm dừng)</h2>
+        <div class="space-y-2 bg-white border border-outline-variant/10 rounded-xl p-4">
+          {
+            extraMessages.map((m) => (
+              <div class="text-sm">
+                <span class="font-bold text-secondary">{m.sender === "admin" ? "Bạn (admin)" : "Khách"}:</span>{" "}
+                <span class="text-on-surface-variant whitespace-pre-wrap">{m.content}</span>
+              </div>
+            ))
+          }
+          {extraMessages.length === 0 && <p class="text-on-surface-variant/70 text-sm">Chưa có.</p>}
+        </div>
+      </section>
+
+      <form method="POST" class="bg-secondary rounded-xl p-6">
+        <label class="flex items-center gap-2 text-white text-sm mb-2">
+          <input type="radio" name="mode" value="reply" checked /> Gửi thẳng cho khách (bot tạm dừng ~20 phút)
+        </label>
+        <label class="flex items-center gap-2 text-white text-sm mb-4">
+          <input type="radio" name="mode" value="nudge" /> Nhắc AI (bot vẫn tự trả lời, làm theo chỉ dẫn này ở câu tiếp theo)
+        </label>
+        <textarea
+          name="message"
+          required
+          rows="3"
+          placeholder="Nhập nội dung..."
+          class="w-full px-4 py-3 rounded-lg border-none mb-4 outline-none"
+        ></textarea>
+        <button type="submit" class="bg-white text-secondary px-8 py-3 rounded-lg font-bold hover:bg-white/90 transition-colors">
+          Gửi
+        </button>
+      </form>
+    </div>
+  </body>
+</html>

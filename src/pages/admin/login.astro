@@ -1,0 +1,48 @@
+---
+import "../../styles/global.css";
+import { checkPassword, sessionToken } from "../../lib/adminAuth";
+
+let error = "";
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const password = formData.get("password")?.toString() ?? "";
+  if (checkPassword(password)) {
+    Astro.cookies.set("admin_auth", sessionToken(), {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+    return Astro.redirect("/admin/chat");
+  }
+  error = "Sai mật khẩu, vui lòng thử lại.";
+}
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập quản trị - maybedding</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body class="bg-surface text-on-surface min-h-screen flex items-center justify-center">
+    <form method="POST" class="w-full max-w-sm bg-white border border-outline-variant/10 rounded-xl shadow-sm p-8">
+      <h1 class="text-headline-md text-on-surface mb-6">Quản trị Chat</h1>
+      <input
+        type="password"
+        name="password"
+        placeholder="Mật khẩu"
+        required
+        autofocus
+        class="w-full px-4 py-3 rounded-lg border border-outline-variant/30 mb-4 focus:ring-2 focus:ring-primary outline-none"
+      />
+      <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-bold hover:bg-red-800 transition-colors">
+        Đăng nhập
+      </button>
+      {error && <p class="text-primary text-sm mt-4">{error}</p>}
+    </form>
+  </body>
+</html>

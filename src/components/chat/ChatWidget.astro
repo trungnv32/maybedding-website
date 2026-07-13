@@ -40,6 +40,8 @@
 
 <script>
   const N8N_WEBHOOK_URL = import.meta.env.PUBLIC_N8N_CHAT_WEBHOOK_URL || "";
+  const ADMIN_POLL_URL = "https://n8n.maybedding.vn/webhook/admin-chat-poll";
+  const POLL_INTERVAL_MS = 6000;
   const HOTLINE_FALLBACK = "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại hoặc liên hệ hotline 0912.426.126";
 
   const thread = document.getElementById("chat-thread") as HTMLDivElement;
@@ -154,6 +156,28 @@
       form.requestSubmit();
     }
   });
+
+  // Poll for messages a staff member sent from /admin/chat — the widget has no persistent
+  // connection, so this is how a reply sent outside the customer's own request cycle
+  // (e.g. while the bot is paused for a human handoff) ever reaches their open tab.
+  let lastAdminMessageId = 0;
+  async function pollAdminMessages() {
+    try {
+      const url = `${ADMIN_POLL_URL}?session=${encodeURIComponent(getSessionId())}&after=${lastAdminMessageId}`;
+      const res = await fetch(url);
+      if (!res.ok) return;
+      const messages: { id: number; content: string }[] = await res.json();
+      for (const msg of messages) {
+        appendBubble(msg.content, "bot");
+        lastAdminMessageId = Math.max(lastAdminMessageId, msg.id);
+      }
+    } catch {
+      // Silent — polling failures shouldn't interrupt the customer's own chat flow.
+    }
+  }
+  if (N8N_WEBHOOK_URL) {
+    setInterval(pollAdminMessages, POLL_INTERVAL_MS);
+  }
 
   // Product-card "Hỏi ngay về sản phẩm này" buttons pre-fill and focus this widget.
   document.querySelectorAll<HTMLButtonElement>(".chat-open-btn").forEach((btn) => {
