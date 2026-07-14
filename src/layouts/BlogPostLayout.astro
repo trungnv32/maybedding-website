@@ -73,4 +73,44 @@ const jsonLd = {
     padding-left: 1.5rem;
     margin-bottom: 1.25rem;
   }
+  .prose-blog :global(ol) {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .prose-blog :global(h3) {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .prose-blog :global(strong) {
+    color: var(--color-on-surface);
+    font-weight: 600;
+  }
+  .prose-blog :global(blockquote) {
+    border-left: 3px solid var(--color-outline-variant);
+    padding-left: 1rem;
+    margin: 1.25rem 0;
+    color: var(--color-on-surface-variant);
+    font-style: italic;
+  }
+  .prose-blog :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 14px;
+  }
+  .prose-blog :global(th),
+  .prose-blog :global(td) {
+    border: 1px solid var(--color-outline-variant);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+  }
+  .prose-blog :global(th) {
+    background: var(--color-surface-container);
+    font-weight: 600;
+    color: var(--color-on-surface);
+  }
 </style>

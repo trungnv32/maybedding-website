@@ -35,6 +35,14 @@ export default defineType({
       ],
     }),
     defineField({
+      name: "bodyMarkdown",
+      title: "Nội dung (Markdown, dùng cho bài tự sinh)",
+      description:
+        "Dùng cho bài do công cụ tự động sinh (định dạng Markdown thô). Nếu có nội dung ở đây, trang blog sẽ hiển thị Markdown này THAY VÌ trường 'Nội dung' ở trên — để trống nếu viết tay bằng trình soạn thảo phía trên.",
+      type: "text",
+      rows: 10,
+    }),
+    defineField({
       name: "seo",
       title: "SEO",
       type: "object",

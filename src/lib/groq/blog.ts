@@ -13,6 +13,7 @@ export interface SanityBlogPostSummary {
 export interface SanityBlogPost extends SanityBlogPostSummary {
   author: string;
   body: any[];
+  bodyMarkdown?: string;
   metaTitle?: string;
   metaDescription?: string;
 }
@@ -24,7 +25,7 @@ const LIST_QUERY = `*[_type == "blogPost" && defined(coverImage.asset)] | order(
 }`;
 
 const DETAIL_QUERY = `*[_type == "blogPost" && slug.current == $slug && defined(coverImage.asset)][0] {
-  "slug": slug.current, title, excerpt, coverImage, category, publishedAt, author, body,
+  "slug": slug.current, title, excerpt, coverImage, category, publishedAt, author, body, bodyMarkdown,
   "metaTitle": seo.metaTitle, "metaDescription": seo.metaDescription
 }`;
 
@@ -40,6 +41,7 @@ type RawSummary = {
 type RawDetail = RawSummary & {
   author?: string;
   body: any[];
+  bodyMarkdown?: string;
   metaTitle?: string;
   metaDescription?: string;
 };
@@ -68,6 +70,7 @@ export async function getBlogPostBySlug(slug: string): Promise<SanityBlogPost | 
     ...toSummary(p),
     author: p.author ?? "Đội ngũ maybedding",
     body: p.body ?? [],
+    bodyMarkdown: p.bodyMarkdown,
     metaTitle: p.metaTitle,
     metaDescription: p.metaDescription,
   };

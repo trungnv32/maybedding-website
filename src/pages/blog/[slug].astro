@@ -1,4 +1,5 @@
 ---
+import { marked } from "marked";
 import { PortableText } from "astro-portabletext";
 import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
 import PortableImage from "../../components/blog/PortableImage.astro";
@@ -12,6 +13,13 @@ if (!post) {
 }
 
 const description = post.metaDescription ?? post.excerpt;
+
+// Bài do công cụ tự động sinh lưu Markdown thô trong bodyMarkdown — ưu tiên hiển
+// thị trường này nếu có nội dung, thay vì body (Portable Text) chỉ dùng cho bài
+// viết tay qua Sanity Studio.
+const bodyMarkdownHtml = post.bodyMarkdown?.trim()
+  ? marked.parse(post.bodyMarkdown, { async: false })
+  : null;
 ---
 
 <BlogPostLayout
@@ -23,5 +31,11 @@ const description = post.metaDescription ?? post.excerpt;
   publishedAt={new Date(post.publishedAt)}
   author={post.author}
 >
-  <PortableText value={post.body} components={{ type: { image: PortableImage } }} />
+  {
+    bodyMarkdownHtml ? (
+      <Fragment set:html={bodyMarkdownHtml} />
+    ) : (
+      <PortableText value={post.body} components={{ type: { image: PortableImage } }} />
+    )
+  }
 </BlogPostLayout>
