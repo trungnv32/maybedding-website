@@ -14,5 +14,10 @@
     "react-is": "^19.2.7",
     "sanity": "^3.68.0",
     "styled-components": "^6.4.3"
+  },
+  "devDependencies": {
+    "cheerio": "^1.2.0",
+    "exceljs": "^4.4.0",
+    "turndown": "^7.2.4"
   }
 }

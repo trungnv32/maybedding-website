@@ -5,6 +5,7 @@ dist/
 # Sanity Studio
 studio/dist/
 studio/.sanity/
+studio/scripts/product-import/output/
 
 # Dependencies
 node_modules/
