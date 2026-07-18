@@ -18,9 +18,9 @@ const { slug, badge, name, price, description, image } = Astro.props;
   <div class="p-6">
     <a href={`/san-pham/${slug}`} class="block hover:text-primary transition-colors">
       <span class="text-secondary text-label-sm">{badge}</span>
-      <h4 class="text-xl text-on-surface mt-1">{name}</h4>
+      <h4 class="text-xl text-on-surface mt-1 line-clamp-2 min-h-14">{name}</h4>
       <p class="text-secondary font-bold text-lg mt-2">{price}</p>
-      <p class="text-on-surface-variant/70 text-sm mt-2 line-clamp-4">{description}</p>
+      <p class="text-on-surface-variant/70 text-sm mt-2 line-clamp-4 min-h-20">{description}</p>
     </a>
     <button
       type="button"
