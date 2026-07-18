@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ChatWidget from "../components/chat/ChatWidget.astro";
+import { getActivityGalleryImages } from "../lib/groq/activityGallery";
+
+const images = await getActivityGalleryImages();
+---
+
+<BaseLayout
+  title="Hoạt Động - maybedding"
+  description="Hình ảnh các hoạt động của maybedding."
+>
+  <section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="mb-12 text-center">
+      <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Hoạt động</span>
+      <h1 class="text-headline-md text-on-surface">Hình Ảnh Hoạt Động</h1>
+    </div>
+    {
+      images.length > 0 ? (
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-gutter">
+          {images.map((image) => (
+            <img src={image.url} alt={image.alt} class="w-full aspect-square object-cover rounded-2xl shadow-md" />
+          ))}
+        </div>
+      ) : (
+        <p class="text-on-surface-variant/70 text-center">Hình ảnh hoạt động đang được cập nhật.</p>
+      )
+    }
+  </section>
+  <ChatWidget />
+</BaseLayout>

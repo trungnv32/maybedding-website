@@ -18,10 +18,14 @@ export const structure: StructureResolver = (S) =>
       S.listItem()
         .title("Về chúng tôi")
         .child(S.document().schemaType("aboutPage").documentId("aboutPage")),
+      S.listItem()
+        .title("Hoạt động (Thư viện ảnh)")
+        .child(S.document().schemaType("activityGallery").documentId("activityGallery")),
       S.divider(),
       S.documentTypeListItem("product").title("Sản phẩm"),
       S.documentTypeListItem("service").title("Dịch vụ"),
       S.documentTypeListItem("blogPost").title("Bài viết Blog"),
+      S.documentTypeListItem("promotion").title("Khuyến mãi"),
       S.documentTypeListItem("storeLocation").title("Cửa hàng"),
       S.documentTypeListItem("policyPage").title("Trang chính sách"),
     ]);

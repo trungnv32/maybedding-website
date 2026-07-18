@@ -1,0 +1,65 @@
+---
+import { PortableText } from "astro-portabletext";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ChatWidget from "../components/chat/ChatWidget.astro";
+import { getActivePromotions } from "../lib/groq/promotions";
+
+const promotions = await getActivePromotions();
+
+function formatDateRange(startDate: string, endDate: string) {
+  const fmt = (d: string) => new Date(d).toLocaleDateString("vi-VN");
+  return `${fmt(startDate)} - ${fmt(endDate)}`;
+}
+---
+
+<BaseLayout
+  title="Khuyến Mãi - maybedding"
+  description="Các chương trình khuyến mãi đang diễn ra tại maybedding."
+>
+  <section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="mb-12 text-center">
+      <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Khuyến mãi</span>
+      <h1 class="text-headline-md text-on-surface">Chương Trình Khuyến Mãi</h1>
+    </div>
+    {
+      promotions.length > 0 ? (
+        <div class="max-w-3xl mx-auto space-y-16">
+          {promotions.map((promo) => (
+            <article class="border-b border-outline-variant/10 pb-16 last:border-b-0 last:pb-0">
+              <p class="text-primary font-bold text-sm mb-2">{formatDateRange(promo.startDate, promo.endDate)}</p>
+              <h2 class="text-xl font-bold text-on-surface mb-4">{promo.title}</h2>
+              <div class="prose-promo text-body-md text-on-surface-variant leading-relaxed">
+                <PortableText value={promo.body} />
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="text-on-surface-variant/70 text-center">
+          Hiện chưa có chương trình khuyến mãi nào đang diễn ra. Vui lòng quay lại sau.
+        </p>
+      )
+    }
+  </section>
+  <ChatWidget />
+</BaseLayout>
+
+<style>
+  .prose-promo :global(p) {
+    margin-bottom: 1rem;
+  }
+  .prose-promo :global(ul) {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .prose-promo :global(ol) {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .prose-promo :global(strong) {
+    color: var(--color-on-surface);
+    font-weight: 600;
+  }
+</style>

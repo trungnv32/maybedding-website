@@ -1,0 +1,62 @@
+---
+import { getActivityGalleryImages } from "../../lib/groq/activityGallery";
+
+const images = await getActivityGalleryImages();
+---
+
+{
+  images.length > 0 && (
+    <section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+      <div class="mb-8 flex items-end justify-between">
+        <div>
+          <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Hoạt động</span>
+          <h3 class="text-headline-md text-on-surface">Khoảnh Khắc Tại maybedding</h3>
+        </div>
+        <div class="hidden md:flex gap-3">
+          <button
+            id="activity-slide-prev"
+            aria-label="Ảnh trước"
+            class="w-11 h-11 rounded-full border border-outline-variant/30 flex items-center justify-center text-on-surface hover:bg-secondary-container transition-colors"
+          >
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button
+            id="activity-slide-next"
+            aria-label="Ảnh sau"
+            class="w-11 h-11 rounded-full border border-outline-variant/30 flex items-center justify-center text-on-surface hover:bg-secondary-container transition-colors"
+          >
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+      <div
+        id="activity-slide-track"
+        class="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {images.map((image) => (
+          <img
+            src={image.url}
+            alt={image.alt}
+            class="w-[280px] md:w-[360px] aspect-[4/3] object-cover rounded-2xl shadow-md shrink-0 snap-start"
+          />
+        ))}
+      </div>
+      <a href="/hoat-dong" class="flex items-center gap-2 text-primary font-bold group w-fit mt-6">
+        Xem tất cả hoạt động
+        <span class="material-symbols-outlined group-hover:translate-x-2 transition-transform">trending_flat</span>
+      </a>
+    </section>
+  )
+}
+
+<script>
+  const track = document.getElementById("activity-slide-track");
+  const prevBtn = document.getElementById("activity-slide-prev");
+  const nextBtn = document.getElementById("activity-slide-next");
+
+  if (track && prevBtn && nextBtn) {
+    const scrollAmount = () => Math.min(track.clientWidth * 0.8, 376);
+    prevBtn.addEventListener("click", () => track.scrollBy({ left: -scrollAmount(), behavior: "smooth" }));
+    nextBtn.addEventListener("click", () => track.scrollBy({ left: scrollAmount(), behavior: "smooth" }));
+  }
+</script>

@@ -7,6 +7,8 @@ import policyPage from "./policyPage";
 import homepage from "./homepage";
 import aboutPage from "./aboutPage";
 import navigation from "./navigation";
+import promotion from "./promotion";
+import activityGallery from "./activityGallery";
 
 export const schemaTypes = [
   product,
@@ -18,4 +20,6 @@ export const schemaTypes = [
   homepage,
   aboutPage,
   navigation,
+  promotion,
+  activityGallery,
 ];
