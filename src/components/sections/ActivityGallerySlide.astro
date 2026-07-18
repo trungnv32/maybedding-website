@@ -2,35 +2,45 @@
 import ActivityLightbox from "../gallery/ActivityLightbox.astro";
 import { getActivityGalleryImages } from "../../lib/groq/activityGallery";
 
-const allImages = await getActivityGalleryImages();
-const previewImages = allImages.slice(0, 3);
+const images = await getActivityGalleryImages();
 ---
 
 {
-  previewImages.length > 0 && (
+  images.length > 0 && (
     <section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-      <div class="flex justify-between items-end mb-12">
+      <div class="mb-8 flex items-end justify-between">
         <div>
           <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Hoạt động</span>
           <h3 class="text-headline-md text-on-surface">Khoảnh Khắc Tại maybedding</h3>
         </div>
-        <a class="text-secondary font-bold flex items-center gap-1 hover:underline" href="/hoat-dong">
-          Xem toàn bộ hoạt động <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        <a href="/hoat-dong" class="hidden md:flex items-center gap-2 text-primary font-bold group w-fit">
+          Xem toàn bộ hoạt động
+          <span class="material-symbols-outlined text-sm group-hover:translate-x-2 transition-transform">arrow_forward</span>
         </a>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-        {previewImages.map((image, i) => (
-          <button type="button" data-gallery-thumb data-index={i} class="block group">
-            <img
-              src={image.url}
-              alt={image.alt}
-              class="w-full aspect-[4/3] object-cover rounded-2xl shadow-md group-hover:opacity-90 transition-opacity"
-            />
-          </button>
+
+      {/* Mobile: 1 swipeable row of every photo. Desktop (md+): fixed 3-box preview grid, no scroll. */}
+      <div class="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:overflow-visible md:snap-none md:pb-0">
+        {images.map((image, i) => (
+          <div class={`w-[240px] md:w-auto shrink-0 snap-start ${i >= 3 ? "md:hidden" : ""}`}>
+            <button type="button" data-gallery-thumb data-index={i} class="block w-full group">
+              <img
+                src={image.url}
+                alt={image.alt}
+                class="w-full aspect-[4/3] object-cover rounded-2xl shadow-md group-hover:opacity-90 transition-opacity"
+              />
+            </button>
+            {image.caption && <p class="mt-2 text-sm text-on-surface-variant line-clamp-2">{image.caption}</p>}
+          </div>
         ))}
       </div>
+
+      <a href="/hoat-dong" class="md:hidden flex items-center gap-2 text-primary font-bold group w-fit mt-6">
+        Xem toàn bộ hoạt động
+        <span class="material-symbols-outlined text-sm group-hover:translate-x-2 transition-transform">arrow_forward</span>
+      </a>
     </section>
   )
 }
 
-<ActivityLightbox images={previewImages} />
+<ActivityLightbox images={images} />
