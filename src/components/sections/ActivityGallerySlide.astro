@@ -1,4 +1,5 @@
 ---
+import ActivityLightbox from "../gallery/ActivityLightbox.astro";
 import { getActivityGalleryImages } from "../../lib/groq/activityGallery";
 
 const images = await getActivityGalleryImages();
@@ -33,12 +34,19 @@ const images = await getActivityGalleryImages();
         id="activity-slide-track"
         class="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {images.map((image) => (
-          <img
-            src={image.url}
-            alt={image.alt}
-            class="w-[280px] md:w-[360px] aspect-[4/3] object-cover rounded-2xl shadow-md shrink-0 snap-start"
-          />
+        {images.map((image, i) => (
+          <button
+            type="button"
+            data-gallery-thumb
+            data-index={i}
+            class="block w-[280px] md:w-[360px] shrink-0 snap-start group"
+          >
+            <img
+              src={image.url}
+              alt={image.alt}
+              class="w-full aspect-[4/3] object-cover rounded-2xl shadow-md group-hover:opacity-90 transition-opacity"
+            />
+          </button>
         ))}
       </div>
       <a href="/hoat-dong" class="flex items-center gap-2 text-primary font-bold group w-fit mt-6">
@@ -60,3 +68,5 @@ const images = await getActivityGalleryImages();
     nextBtn.addEventListener("click", () => track.scrollBy({ left: scrollAmount(), behavior: "smooth" }));
   }
 </script>
+
+<ActivityLightbox images={images} />
