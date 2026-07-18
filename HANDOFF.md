@@ -35,22 +35,17 @@ Tài liệu bàn giao trạng thái dự án tại thời điểm 2026-07-18. Đ
 3. **`6a28816`**: Cố định chiều cao tiêu đề (2 dòng)/mô tả (4 dòng) trên `ProductCard.astro` bằng `line-clamp` + `min-height` để lưới sản phẩm thẳng hàng.
 4. **`5b66a19` → `4786956`**: Đổi favicon từ icon "m" đặt tạm sang crop icon hoa thật từ `maybedding_logo.png` (`public/favicon.png` 32×32, `public/apple-touch-icon.png` 180×180). Đã sửa lại crop 1 lần vì bản đầu bị lem chữ "y" bên cạnh.
 
-## ⚠️ Cần chủ web/agent tiếp theo xử lý — trạng thái Sanity hiện tại
+## Trạng thái Sanity hiện tại (đã xác nhận sạch)
 
-Kiểm tra trực tiếp lúc viết file này:
-- **16 sản phẩm đã publish** (15 `isActive:true` đang hiển thị công khai, 1 `isActive:false` — `product-dem-legends-limited`).
-- **3 sản phẩm đang có draft chưa publish** trong Sanity Studio (`drafts.product-dem-bong-ep-bebop-cotton`, `drafts.product-dem-bong-mix-modern`, `drafts.product-dem-legends-limited`) — tức chủ web đã vào Studio sửa tay (rút gọn tên, bật "Đang bán"...) nhưng **chưa bấm nút Publish**, nên thay đổi CHƯA lên web thật. Đặc biệt `dem-legends-limited`: bản publish đang `isActive:false`, bản draft đang `isActive:true` — nếu muốn sản phẩm này hiển thị, cần vào Studio bấm Publish.
-- Đây là hành vi bình thường của Sanity (draft/publish workflow), không phải lỗi — nhưng nên nhắc chủ web publish nốt nếu họ đã sửa xong.
+- Toàn bộ 3 sản phẩm từng ở trạng thái draft (`dem-bong-ep-bebop-cotton`, `dem-bong-mix-modern`, `dem-legends-limited`) **đã được chủ web publish** — đã kiểm tra lại: không còn document nào ở dạng `drafts.*`, `product-dem-legends-limited` hiện `isActive: true`.
 - 1 sản phẩm cũ (`Đệm bông ép 2 mảnh vỏ chần`) chưa từng có ảnh từ trước khi session này bắt đầu (không phải do migration) — hiện bị ẩn khỏi listing do guard `defined(images[0].asset)`, cần chủ web tự upload ảnh nếu muốn sản phẩm này lên web.
 
-## File chưa track ở root (đã hỏi & xác nhận, không động vào)
+## File chưa track ở root — đã xác nhận, thuộc về dự án, KHÔNG xoá
 
-- `data/` — 5 ảnh mẫu chủ web chuẩn bị, **không liên quan** tới tính năng nào đã làm (đã hỏi, chủ web bảo bỏ qua).
-- `maybedding_logo.png` — logo gốc độ phân giải cao (1254×1254), dùng để crop ra favicon. Giữ lại phòng khi cần crop lại/xuất icon khác.
-- Cả 2 file này **cố tình không thêm vào git** — nếu cần dùng thêm thì thêm, đừng tự ý xoá.
+- `data/` và `maybedding_logo.png` — chủ web xác nhận đây là 1 phần của dự án, cứ để nguyên. `maybedding_logo.png` là logo gốc độ phân giải cao (1254×1254) dùng để crop favicon/icon khi cần.
+- 2 file này **cố tình không thêm vào git** (không phải bị bỏ sót) — đừng `git add` hay xoá trừ khi chủ web yêu cầu khác.
 
 ## Việc gợi ý làm tiếp (chưa ai yêu cầu, chỉ là quan sát)
 
-- Nhắc chủ web publish 3 draft đang treo ở Sanity Studio (mục trên).
 - Rà lại 15+ sản phẩm mới import xem mô tả/ảnh/biến thể có ổn không (mô tả tự động chuyển từ HTML→Markdown có thể còn sạn định dạng, VD nhiều thẻ `<h1>` lồng nhau từ trang nguồn).
 - Còn nhiều sản phẩm khác trên tuananh.vn (chăn, gối, phụ kiện...) chưa được hỏi copy — nếu chủ web gửi thêm link thì dùng lại đúng quy trình `fetch-products.mjs` → gửi Excel cho họ sửa → `import-products.mjs`.
