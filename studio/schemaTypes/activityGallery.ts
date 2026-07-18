@@ -9,7 +9,7 @@ export default defineType({
       name: "items",
       title: "Ảnh hoạt động",
       description:
-        'Mỗi lần bấm "Add item" là 1 đợt tải ảnh mới: chọn/thả nhiều ảnh cùng lúc, rồi gõ 1 dòng ghi chú áp dụng riêng cho đợt ảnh đó. Đợt tải ảnh sau (bấm "Add item" lần nữa) sẽ có ghi chú riêng, không dùng lại ghi chú của đợt trước.',
+        'Mỗi lần bấm "Add item" là 1 đợt tải ảnh mới, rồi gõ 1 dòng ghi chú áp dụng riêng cho đợt ảnh đó. Đợt tải ảnh sau (bấm "Add item" lần nữa) sẽ có ghi chú riêng, không dùng lại ghi chú của đợt trước. LƯU Ý: để tải nhiều ảnh cùng lúc, hãy CHỌN NHIỀU FILE trong File Explorer rồi KÉO-THẢ tất cả vào khung "Ảnh" — nút "Upload" (chọn từng file) chỉ nhận được 1 ảnh mỗi lần bấm, đây là giới hạn của Sanity chứ không phải lỗi.',
       type: "array",
       of: [
         {
@@ -21,7 +21,7 @@ export default defineType({
           fields: [
             defineField({
               name: "images",
-              title: "Ảnh (chọn hoặc thả nhiều ảnh cùng lúc)",
+              title: "Ảnh (kéo-thả nhiều ảnh cùng lúc vào đây)",
               type: "array",
               of: [{ type: "image", options: { hotspot: true } }],
               options: { layout: "grid" },
