@@ -2,45 +2,25 @@
 import ActivityLightbox from "../gallery/ActivityLightbox.astro";
 import { getActivityGalleryImages } from "../../lib/groq/activityGallery";
 
-const images = await getActivityGalleryImages();
+const allImages = await getActivityGalleryImages();
+const previewImages = allImages.slice(0, 3);
 ---
 
 {
-  images.length > 0 && (
+  previewImages.length > 0 && (
     <section class="py-section-gap max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-      <div class="mb-8 flex items-end justify-between">
+      <div class="flex justify-between items-end mb-12">
         <div>
           <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Hoạt động</span>
           <h3 class="text-headline-md text-on-surface">Khoảnh Khắc Tại maybedding</h3>
         </div>
-        <div class="hidden md:flex gap-3">
-          <button
-            id="activity-slide-prev"
-            aria-label="Ảnh trước"
-            class="w-11 h-11 rounded-full border border-outline-variant/30 flex items-center justify-center text-on-surface hover:bg-secondary-container transition-colors"
-          >
-            <span class="material-symbols-outlined">chevron_left</span>
-          </button>
-          <button
-            id="activity-slide-next"
-            aria-label="Ảnh sau"
-            class="w-11 h-11 rounded-full border border-outline-variant/30 flex items-center justify-center text-on-surface hover:bg-secondary-container transition-colors"
-          >
-            <span class="material-symbols-outlined">chevron_right</span>
-          </button>
-        </div>
+        <a class="text-secondary font-bold flex items-center gap-1 hover:underline" href="/hoat-dong">
+          Xem toàn bộ hoạt động <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
       </div>
-      <div
-        id="activity-slide-track"
-        class="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {images.map((image, i) => (
-          <button
-            type="button"
-            data-gallery-thumb
-            data-index={i}
-            class="block w-[280px] md:w-[360px] shrink-0 snap-start group"
-          >
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        {previewImages.map((image, i) => (
+          <button type="button" data-gallery-thumb data-index={i} class="block group">
             <img
               src={image.url}
               alt={image.alt}
@@ -49,24 +29,8 @@ const images = await getActivityGalleryImages();
           </button>
         ))}
       </div>
-      <a href="/hoat-dong" class="flex items-center gap-2 text-primary font-bold group w-fit mt-6">
-        Xem tất cả hoạt động
-        <span class="material-symbols-outlined group-hover:translate-x-2 transition-transform">trending_flat</span>
-      </a>
     </section>
   )
 }
 
-<script>
-  const track = document.getElementById("activity-slide-track");
-  const prevBtn = document.getElementById("activity-slide-prev");
-  const nextBtn = document.getElementById("activity-slide-next");
-
-  if (track && prevBtn && nextBtn) {
-    const scrollAmount = () => Math.min(track.clientWidth * 0.8, 376);
-    prevBtn.addEventListener("click", () => track.scrollBy({ left: -scrollAmount(), behavior: "smooth" }));
-    nextBtn.addEventListener("click", () => track.scrollBy({ left: scrollAmount(), behavior: "smooth" }));
-  }
-</script>
-
-<ActivityLightbox images={images} />
+<ActivityLightbox images={previewImages} />

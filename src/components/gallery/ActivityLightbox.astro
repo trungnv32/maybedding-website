@@ -42,7 +42,13 @@ const { images } = Astro.props;
       </button>
 
       <div id="activity-lightbox-stage" class="absolute inset-0 flex items-center justify-center overflow-hidden touch-none">
-        <img id="activity-lightbox-img" src="" alt="" class="max-w-none select-none will-change-transform" draggable="false" />
+        <img
+          id="activity-lightbox-img"
+          src=""
+          alt=""
+          class="max-w-[92vw] max-h-[80vh] md:max-w-[85vw] md:max-h-[85vh] w-auto h-auto object-contain select-none will-change-transform"
+          draggable="false"
+        />
       </div>
 
       <div class="absolute bottom-6 inset-x-0 z-10 flex items-center justify-center gap-3">
