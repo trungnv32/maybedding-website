@@ -11,10 +11,7 @@ const fallbackExploreLinks: SanityMenuItem[] = [
   { href: "/hoat-dong", label: "Hoạt động" },
   { href: "/blog", label: "Blog" },
 ];
-const fallbackQuickLinks: SanityMenuItem[] = [
-  { href: "/ve-chung-toi", label: "Về chúng tôi" },
-  { href: "/lien-he", label: "Liên hệ" },
-];
+const fallbackQuickLinks: SanityMenuItem[] = [{ href: "/ve-chung-toi", label: "Về chúng tôi" }];
 
 const nav = await getNavigation();
 const exploreLinks = nav?.footerExploreMenu?.length ? nav.footerExploreMenu : fallbackExploreLinks;
@@ -24,6 +21,7 @@ const policyPages = await getPolicyPages();
 const quickLinks = [
   ...baseQuickLinks,
   ...policyPages.map((p) => ({ href: `/chinh-sach/${p.slug}`, label: p.title })),
+  { href: "/lien-he", label: "Liên hệ" },
 ];
 
 // Falls back to these until real `storeLocation` / `siteSettings` documents
