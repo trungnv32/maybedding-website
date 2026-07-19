@@ -10,9 +10,11 @@ const fallbackExploreLinks: SanityMenuItem[] = [
   { href: "/khuyen-mai", label: "Khuyến mãi" },
   { href: "/hoat-dong", label: "Hoạt động" },
   { href: "/blog", label: "Blog" },
+];
+const fallbackQuickLinks: SanityMenuItem[] = [
+  { href: "/ve-chung-toi", label: "Về chúng tôi" },
   { href: "/lien-he", label: "Liên hệ" },
 ];
-const fallbackQuickLinks: SanityMenuItem[] = [{ href: "/ve-chung-toi", label: "Về chúng tôi" }];
 
 const nav = await getNavigation();
 const exploreLinks = nav?.footerExploreMenu?.length ? nav.footerExploreMenu : fallbackExploreLinks;
