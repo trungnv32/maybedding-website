@@ -4,10 +4,24 @@ function authHeaders() {
   return { "x-admin-secret": import.meta.env.ADMIN_CHAT_API_SECRET };
 }
 
+const timeFormatter = new Intl.DateTimeFormat("vi-VN", {
+  timeZone: "Asia/Ho_Chi_Minh",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+export function formatChatTime(isoString: string): string {
+  return timeFormatter.format(new Date(isoString));
+}
+
 export interface AdminSession {
   session_id: string;
   message_count: string;
   last_id: number;
+  last_message_at: string;
 }
 
 async function assertOk(res: Response, label: string) {
@@ -27,6 +41,7 @@ export interface AiHistoryItem {
   id: number;
   role: string;
   content: string;
+  created_at: string;
 }
 
 export interface ExtraMessageItem {

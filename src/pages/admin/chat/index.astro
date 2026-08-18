@@ -1,7 +1,7 @@
 ---
 import "../../../styles/global.css";
 import { isAuthed } from "../../../lib/adminAuth";
-import { listSessions } from "../../../lib/adminChatApi";
+import { listSessions, formatChatTime } from "../../../lib/adminChatApi";
 
 const cookie = Astro.cookies.get("admin_auth")?.value;
 if (!isAuthed(cookie)) {
@@ -44,7 +44,9 @@ try {
                   class="block bg-white border border-outline-variant/10 rounded-xl p-4 shadow-sm hover:shadow-md transition-all"
                 >
                   <div class="font-bold text-primary break-all">{s.session_id}</div>
-                  <div class="text-on-surface-variant/70 text-sm mt-1">{s.message_count} tin nhắn</div>
+                  <div class="text-on-surface-variant/70 text-sm mt-1">
+                    {s.message_count} tin nhắn · {formatChatTime(s.last_message_at)}
+                  </div>
                 </a>
               </li>
             ))}
