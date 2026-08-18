@@ -1,6 +1,6 @@
 # HANDOFF — maybedding-website
 
-Tài liệu bàn giao trạng thái dự án tại thời điểm 2026-07-18. Đọc file này trước khi tiếp tục bất kỳ việc gì.
+Tài liệu bàn giao trạng thái dự án tại thời điểm 2026-08-18. Đọc file này trước khi tiếp tục bất kỳ việc gì.
 
 ## Bối cảnh & giao tiếp
 
@@ -15,6 +15,14 @@ Tài liệu bàn giao trạng thái dự án tại thời điểm 2026-07-18. Đ
 - **QUAN TRỌNG**: sửa schema trong `studio/schemaTypes/` KHÔNG tự động lên Sanity Studio đã host. Phải chạy `npm run deploy` trong `studio/` (chạy `sanity deploy`, đã đăng nhập sẵn CLI trên máy này) để đẩy schema mới lên `https://maybedding-website.sanity.studio/`. Sửa code Astro thì `git push` — có `import.meta.env.CONTEXT` trong `BaseLayout.astro` gợi ý site build qua Netlify (dò `noindex` cho preview/branch deploy), nhưng **repo này không có `netlify.toml`** — chưa xác nhận được webhook/dashboard tự deploy khi push, nên kiểm tra lại trước khi giả định push = tự lên production.
 - Lấy Sanity auth token để chạy script ghi dữ liệu: `cd studio && npx sanity debug --secrets` (dòng "Auth token:"), rồi `SANITY_AUTH_TOKEN=<token> node <script>`.
 - Biến môi trường cần có trong `.env` (không commit): `PUBLIC_SANITY_PROJECT_ID`, `PUBLIC_SANITY_DATASET`, `N8N_URL`, `N8N_API_KEY`, `PUBLIC_N8N_CHAT_WEBHOOK_URL`, `ADMIN_CHAT_PASSWORD`, `ADMIN_CHAT_API_SECRET`.
+
+### Tích hợp chatbot — toàn bộ logic AI nằm ở n8n, web chỉ gọi webhook
+
+- Chat widget khách hàng (`src/components/chat/ChatWidget.astro`, ở trang chủ): `POST` tới `PUBLIC_N8N_CHAT_WEBHOOK_URL` với `{sessionId, action:"sendMessage", chatInput}`, nhận lại `{output|text|reply}`. `sessionId` dạng `web:<uuid>` lưu trong `sessionStorage`. Nếu env trống thì dùng câu trả lời mẫu (`mockReply`) để vẫn test được UI.
+- Trang quản trị `/admin/chat` (`src/lib/adminChatApi.ts`, `src/pages/admin/chat/`): gọi các webhook `https://n8n.maybedding.vn/webhook/admin-chat-{sessions,messages,send,poll}`, xác thực bằng header `x-admin-secret` = `ADMIN_CHAT_API_SECRET`. Cho phép nhân viên xem hội thoại AI + gửi tin nhắn thủ công (chế độ "reply" tạm dừng bot ~10 phút, hoặc "nudge" chỉ gợi ý cho bot tự trả lời câu tiếp theo). Widget khách poll `admin-chat-poll` mỗi 3 giây để nhận tin admin gửi ngoài luồng request của khách.
+- **Toàn bộ workflow này sống trên server n8n (`n8n.maybedding.vn`), KHÔNG có trong repo git.** Workflow chính: "Website Chat Widget" (bot AI, id `o3VSJlAZdL9D100G`) và "Website Admin Chat API" (5 webhook admin ở trên, id `DACXfmSizB44CF5d`).
+- **`N8N_API_KEY` trong `.env` cho phép gọi thẳng REST API của n8n** (`GET/PUT {N8N_URL}/api/v1/workflows/<id>`, header `X-N8N-API-KEY`) để đọc và **sửa trực tiếp** các workflow này — đã dùng cách này trong session 2026-08-18 để thêm timestamp cho chat (sửa 2 node Postgres `List Sessions`/`Get AI History` trong workflow "Website Admin Chat API"). Chỉ sửa workflow thuộc dự án này qua đường này; **không đụng vào các workflow khác** đang chạy trên cùng instance n8n (VD `CSKH Messenger`, `call_human_zalo`, `maybedding-invoice`, `maybedding-inventory`...) nếu chưa hỏi chủ web trước.
+- Bảng Postgres đứng sau: `n8n_chat_histories` (lịch sử hội thoại AI, do node "Postgres Chat Memory" mặc định của n8n tạo — đã có sẵn cột `created_at` với dữ liệu lịch sử chính xác), `website_chat_control` (trạng thái tạm dừng bot theo session), `website_chat_extra_messages` (tin nhắn admin gửi tay, có `created_at`).
 
 ## Quy ước code đã dùng xuyên suốt (giữ nhất quán khi sửa tiếp)
 
@@ -34,6 +42,8 @@ Tài liệu bàn giao trạng thái dự án tại thời điểm 2026-07-18. Đ
    - Đã dùng công cụ này fetch + import **17 sản phẩm thật** từ tuananh.vn (đệm, bộ ga phủ) theo yêu cầu chủ web.
 3. **`6a28816`**: Cố định chiều cao tiêu đề (2 dòng)/mô tả (4 dòng) trên `ProductCard.astro` bằng `line-clamp` + `min-height` để lưới sản phẩm thẳng hàng.
 4. **`5b66a19` → `4786956`**: Đổi favicon từ icon "m" đặt tạm sang crop icon hoa thật từ `maybedding_logo.png` (`public/favicon.png` 32×32, `public/apple-touch-icon.png` 180×180). Đã sửa lại crop 1 lần vì bản đầu bị lem chữ "y" bên cạnh.
+5. **`4b41dab` → `9e32098`** (2026-08-18): Sắp xếp lại menu "Liên hệ" ở footer theo yêu cầu chủ web — chuyển từ cột "Khám phá" sang cuối cùng trong cột "Liên kết nhanh" (`src/components/layout/Footer.astro`, chỉ sửa fallback vì Sanity `navigation` doc chưa có dữ liệu cho 2 menu này).
+6. **`79f6710`** (2026-08-18): Thêm timestamp cho trang quản trị chat `/admin/chat` — danh sách phiên hiện giờ tin nhắn cuối, mỗi tin nhắn trong hội thoại hiện giờ gửi (định dạng giờ VN qua `formatChatTime()` mới trong `adminChatApi.ts`). Đi kèm sửa 2 node Postgres trong workflow n8n "Website Admin Chat API" (xem mục Tích hợp chatbot ở trên) để trả thêm cột `created_at` — đã kiểm tra kỹ và xác nhận cột này vốn có sẵn dữ liệu lịch sử chính xác (không phải giá trị giả lập), nên timestamp đúng 100% kể cả tin nhắn cũ.
 
 ## Trạng thái Sanity hiện tại (đã xác nhận sạch)
 
@@ -49,3 +59,4 @@ Tài liệu bàn giao trạng thái dự án tại thời điểm 2026-07-18. Đ
 
 - Rà lại 15+ sản phẩm mới import xem mô tả/ảnh/biến thể có ổn không (mô tả tự động chuyển từ HTML→Markdown có thể còn sạn định dạng, VD nhiều thẻ `<h1>` lồng nhau từ trang nguồn).
 - Còn nhiều sản phẩm khác trên tuananh.vn (chăn, gối, phụ kiện...) chưa được hỏi copy — nếu chủ web gửi thêm link thì dùng lại đúng quy trình `fetch-products.mjs` → gửi Excel cho họ sửa → `import-products.mjs`.
+- Danh sách phiên chat ở `/admin/chat` giới hạn cứng **50 phiên gần nhất** (`LIMIT 50` trong node "List Sessions" của workflow n8n) — nếu lượng khách chat tăng, phiên cũ hơn sẽ rơi khỏi danh sách dù chưa được trả lời. Chưa có phân trang/lọc theo ngày/lọc "chưa xem" — cân nhắc bổ sung nếu chủ web cần.
